@@ -118,10 +118,20 @@ async fn return_license(
     base_url: &str,
     borrow_id: &str,
 ) -> Result<(), String> {
-    let url = format!("{}/licenses/return/{}", base_url, borrow_id);
+    let url = format!("{}/licenses/return", base_url);
+    
+    #[derive(Serialize)]
+    struct ReturnRequest {
+        id: String,
+    }
+    
+    let req = ReturnRequest {
+        id: borrow_id.to_string(),
+    };
 
     let response = client
         .post(&url)
+        .json(&req)
         .send()
         .await
         .map_err(|e| format!("Request failed: {}", e))?;
