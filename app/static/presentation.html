@@ -24,32 +24,33 @@
       letter-spacing: -0.02em;
     }
     .reveal h1 { 
-      font-size: 2.8em; 
-      margin-bottom: 0.3em;
+      font-size: 2.2em; 
+      margin-bottom: 0.2em;
       font-weight: 200;
     }
     .reveal h2 { 
-      font-size: 1.6em; 
-      margin-bottom: 1.2em;
+      font-size: 1.3em; 
+      margin-bottom: 0.6em;
       font-weight: 300;
     }
     .reveal h3 { 
-      font-size: 1.1em;
+      font-size: 0.95em;
       font-weight: 400;
-      margin-bottom: 0.8em;
+      margin-bottom: 0.5em;
     }
     .reveal p, .reveal li {
-      font-size: 0.9em;
-      line-height: 1.8;
+      font-size: 0.75em;
+      line-height: 1.5;
       color: #333;
       font-weight: 300;
     }
     .reveal ul {
       list-style: none;
       padding: 0;
+      margin: 0.8em 0;
     }
     .reveal li {
-      padding: 0.4em 0;
+      padding: 0.3em 0;
       position: relative;
       padding-left: 1.5em;
     }
@@ -60,47 +61,47 @@
       color: var(--mb-blue);
     }
     .reveal .mb-logo {
-      font-size: 0.7em;
+      font-size: 0.65em;
       color: #000;
       font-weight: 300;
       letter-spacing: 0.3em;
-      margin-bottom: 3em;
+      margin-bottom: 1.5em;
       text-transform: uppercase;
     }
     .comparison-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 2em;
-      margin-top: 2em;
+      gap: 1.2em;
+      margin-top: 1em;
     }
     .comparison-box {
       background: #f8f8f8;
       border-left: 3px solid var(--mb-blue);
-      padding: 1.5em;
+      padding: 1em;
       text-align: left;
     }
     .comparison-box.automotive {
       border-left-color: #666;
     }
     .comparison-box h3 {
-      font-size: 1em;
-      margin-bottom: 1em;
+      font-size: 0.85em;
+      margin-bottom: 0.6em;
       color: #000;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       font-weight: 400;
     }
     .comparison-box p {
-      font-size: 0.85em;
-      margin: 0.6em 0;
-      line-height: 1.6;
+      font-size: 0.75em;
+      margin: 0.4em 0;
+      line-height: 1.4;
     }
     .flow-step {
       background: #f8f8f8;
       border-left: 2px solid var(--mb-blue);
-      padding: 0.8em 1em;
-      margin: 0.6em 0;
-      font-size: 0.85em;
+      padding: 0.6em 0.8em;
+      margin: 0.4em 0;
+      font-size: 0.75em;
       font-weight: 300;
     }
     .flow-step.red {
@@ -124,20 +125,21 @@
     .key-difference {
       background: #f0f9ff;
       border-left: 3px solid var(--mb-blue);
-      padding: 1.2em 1.5em;
-      margin: 1.5em 0;
-      font-size: 0.95em;
+      padding: 0.8em 1em;
+      margin: 0.8em 0;
+      font-size: 0.8em;
       font-weight: 300;
+      line-height: 1.4;
     }
     .tool-link {
       display: inline-block;
       background: #000;
       color: white;
-      padding: 0.6em 1.5em;
+      padding: 0.5em 1.2em;
       text-decoration: none;
-      margin: 0.3em;
+      margin: 0.2em;
       font-weight: 300;
-      font-size: 0.75em;
+      font-size: 0.65em;
       letter-spacing: 0.05em;
       text-transform: uppercase;
       border: none;
@@ -149,13 +151,13 @@
     }
     .back-link {
       position: absolute;
-      top: 20px;
-      left: 20px;
+      top: 15px;
+      left: 15px;
       color: var(--mb-blue);
       text-decoration: none;
       font-weight: 300;
       z-index: 1000;
-      font-size: 0.9em;
+      font-size: 0.7em;
     }
     .fragment.highlight-current-blue.visible:not(.current-fragment) {
       opacity: 0.3;
@@ -164,35 +166,38 @@
       list-style: none;
       counter-reset: item;
       padding: 0;
+      margin: 0.8em 0;
     }
     .reveal ol li {
       counter-increment: item;
-      padding-left: 2.5em;
+      padding-left: 2em;
       position: relative;
+      padding-top: 0.2em;
+      padding-bottom: 0.2em;
     }
     .reveal ol li:before {
       content: counter(item);
       position: absolute;
       left: 0;
-      top: 0;
+      top: 0.2em;
       color: var(--mb-blue);
       font-weight: 400;
-      width: 1.5em;
+      width: 1.2em;
       text-align: right;
-      padding-right: 0.5em;
+      padding-right: 0.4em;
     }
     .subtitle {
-      font-size: 0.9em;
+      font-size: 0.75em;
       color: #666;
       font-weight: 300;
-      margin-top: 0.5em;
+      margin-top: 0.3em;
     }
     .section-label {
-      font-size: 0.7em;
+      font-size: 0.6em;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--mb-blue);
-      margin-bottom: 1em;
+      margin-bottom: 0.6em;
       font-weight: 400;
     }
   </style>
@@ -208,7 +213,7 @@
         <div class="mb-logo">Mercedes-Benz</div>
         <h1>Automotive vs Cloud DevOps</h1>
         <p class="subtitle">Understanding the journey from edge to observability</p>
-        <p style="font-size:0.7em; margin-top:60px; color:#999; font-weight:300">
+        <p style="font-size:0.6em; margin-top:3em; color:#999; font-weight:300">
           Press <span class="highlight">→</span> or <span class="highlight">Space</span> to continue
         </p>
       </section>
@@ -321,7 +326,7 @@
           <p><strong>Vehicles:</strong> Many collectors & aggregators → data fragments across organizations</p>
           <p style="margin-top:1.2em"><strong>Cloud:</strong> L1/L2/L3 exist, BUT everyone sees the <span class="highlight">same telemetry in the same tools</span></p>
         </div>
-        <p class="fragment" style="margin-top:2em; font-size:0.95em">
+        <p class="fragment" style="margin-top:1em; font-size:0.8em">
           Shared visibility enables fast, collaborative resolution
         </p>
       </section>
@@ -331,9 +336,9 @@
         <div class="section-label">Solution</div>
         <h2>Bridging the Gap</h2>
         <p class="subtitle">How to bring Cloud DevOps practices to Edge/IoT</p>
-        <ol>
+        <ol style="margin-top:0.8em">
           <li class="fragment"><strong>Transform continuous → discrete:</strong> Sample, aggregate, emit events</li>
-          <li class="fragment"><strong>Observability Gateway:</strong> Edge device processes signals before cloud</li>
+          <li class="fragment"><strong>Observability Gateway:</strong> Edge processes signals before cloud</li>
           <li class="fragment"><strong>Correlation IDs:</strong> Link vehicle ID → session → error</li>
           <li class="fragment"><strong>Unified Stack:</strong> Same Grafana/Loki/Prometheus for all</li>
           <li class="fragment"><strong>Shared Access:</strong> Everyone sees same data, no handoffs</li>
@@ -344,21 +349,21 @@
       <section>
         <div class="section-label">Observability Stack</div>
         <h2>The Cloud Toolchain</h2>
-        <div style="text-align:left; margin:2em auto; max-width:700px">
+        <div style="text-align:left; margin:1em auto; max-width:700px">
           <div class="flow-step">
-            <strong>Logs (Loki)</strong><br>What happened? Structured events
+            <strong>Logs (Loki)</strong> – What happened? Structured events
           </div>
           <div class="flow-step">
-            <strong>Metrics (Prometheus)</strong><br>How much? Time-series data
+            <strong>Metrics (Prometheus)</strong> – How much? Time-series data
           </div>
           <div class="flow-step">
-            <strong>Traces (OpenTelemetry)</strong><br>Where? Request flows
+            <strong>Traces (OpenTelemetry)</strong> – Where? Request flows
           </div>
           <div class="flow-step">
-            <strong>Dashboards (Grafana)</strong><br>Visualize everything
+            <strong>Dashboards (Grafana)</strong> – Visualize everything
           </div>
         </div>
-        <p class="fragment" style="margin-top:2em">
+        <p class="fragment" style="margin-top:1.2em">
           <a href="http://localhost:3000" target="_blank" class="tool-link">Open Grafana</a>
           <a href="/" target="_blank" class="tool-link">Try Demo</a>
         </p>
@@ -384,7 +389,7 @@
             <p>Automated correlation</p>
           </div>
         </div>
-        <p class="fragment" style="margin-top:2em; font-size:0.9em">
+        <p class="fragment" style="margin-top:1em; font-size:0.75em">
           Versioned deploys + dashboards = <span class="highlight">failures localized to a commit</span>
         </p>
       </section>
@@ -438,7 +443,7 @@
         <div class="section-label">Demonstration</div>
         <h2>License Server Demo</h2>
         <p class="subtitle">Showcasing Cloud DevOps practices</p>
-        <div style="text-align:left; margin:2em auto; max-width:700px">
+        <div style="text-align:left; margin:1em auto; max-width:700px">
           <div class="flow-step">
             Borrow/Return licenses with <strong>budget tracking</strong>
           </div>
@@ -455,7 +460,7 @@
             Dashboards in <strong>Grafana</strong>
           </div>
         </div>
-        <p style="margin-top:2em">
+        <p style="margin-top:1.2em">
           <a href="/" class="tool-link">Launch Demo</a>
         </p>
       </section>
@@ -464,7 +469,7 @@
       <section>
         <div class="section-label">Summary</div>
         <h2>Key Takeaways</h2>
-        <ol style="text-align:left; max-width:750px; margin:1.5em auto">
+        <ol style="text-align:left; max-width:750px; margin:1em auto">
           <li class="fragment"><strong>Ownership:</strong> Cloud teams build → run → fix (no handoffs)</li>
           <li class="fragment"><strong>Visibility:</strong> Unified telemetry accessible to everyone</li>
           <li class="fragment"><strong>Speed:</strong> Minutes vs weeks to triage</li>
@@ -478,12 +483,12 @@
       <section>
         <div class="mb-logo">Mercedes-Benz</div>
         <h1>Thank You</h1>
-        <p style="margin-top:3em">
+        <p style="margin-top:2em">
           <a href="/" class="tool-link">Back to App</a>
           <a href="/config" class="tool-link">Budget Config</a>
           <a href="http://localhost:3000" target="_blank" class="tool-link">Grafana</a>
         </p>
-        <p style="font-size:0.7em; margin-top:4em; color:#999; font-weight:300">
+        <p style="font-size:0.6em; margin-top:2.5em; color:#999; font-weight:300">
           Press <span class="highlight">Esc</span> for overview • <span class="highlight">F</span> for fullscreen
         </p>
       </section>
