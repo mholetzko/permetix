@@ -58,7 +58,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum(licenses_borrowed)",
           "refId": "A"
         }
@@ -90,7 +90,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum(increase(license_borrow_success_total[1h]))",
           "refId": "A"
         }
@@ -132,7 +132,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum(rate(license_borrow_success_total[5m])) / sum(rate(license_borrow_attempts_total[5m]))",
           "refId": "A"
         }
@@ -172,7 +172,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum(increase(license_overage_checkouts_total[1h]))",
           "refId": "A"
         }
@@ -215,7 +215,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum(rate(license_overage_checkouts_total[5m])) / (sum(rate(license_borrow_success_total[5m])) + 0.0001)",
           "refId": "A"
         }
@@ -256,7 +256,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum(increase(license_overage_checkouts_total[24h])) * 100",
           "refId": "A"
         }
@@ -296,7 +296,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum by (tool) (licenses_borrowed)",
           "legendFormat": "{{tool}}",
           "refId": "A"
@@ -334,7 +334,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum by (tool) (rate(license_borrow_success_total[1m])) * 60",
           "legendFormat": "{{tool}}",
           "refId": "A"
@@ -374,7 +374,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum by (user) (increase(license_borrow_success_total[1h]))",
           "legendFormat": "{{user}}",
           "refId": "A"
@@ -405,7 +405,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "topk(10, sum by (user) (increase(license_borrow_success_total[1h])))",
           "legendFormat": "{{user}}",
           "refId": "A"
@@ -460,7 +460,7 @@
       ],
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum by (user) (increase(license_borrow_success_total[1h]))",
           "legendFormat": "Checkouts",
           "refId": "A",
@@ -508,7 +508,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum by (tool) (rate(license_overage_checkouts_total[5m])) / (sum by (tool) (rate(license_borrow_success_total[5m])) + 0.0001)",
           "legendFormat": "{{tool}}",
           "refId": "A"
@@ -576,13 +576,13 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum by (tool) (increase(license_borrow_success_total[5m])) - sum by (tool) (increase(license_overage_checkouts_total[5m]))",
           "legendFormat": "{{tool}} - commit",
           "refId": "A"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum by (tool) (increase(license_overage_checkouts_total[5m]))",
           "legendFormat": "{{tool}} - overage",
           "refId": "B"
@@ -613,7 +613,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum by (tool) (increase(license_overage_checkouts_total[1h]))",
           "legendFormat": "{{tool}}",
           "refId": "A"
@@ -654,7 +654,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "count(licenses_at_max_overage > 0)",
           "refId": "A"
         }
@@ -695,7 +695,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "max(licenses_overage)",
           "refId": "A"
         }
@@ -742,7 +742,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum(increase(license_overage_checkouts_total[24h])) * 100 + count(licenses_total) * 1000",
           "refId": "A"
         }
@@ -775,7 +775,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "count(licenses_total) * 1000",
           "refId": "A"
         }
@@ -816,7 +816,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum(increase(license_overage_checkouts_total[24h])) * 100",
           "refId": "A"
         }
@@ -856,7 +856,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "(count(licenses_total) * 1000) / (sum(increase(license_overage_checkouts_total[24h])) * 100 + count(licenses_total) * 1000 + 1)",
           "refId": "A"
         }
@@ -923,13 +923,13 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "count(licenses_total) * 1000 / 24",
           "legendFormat": "Commit Cost",
           "refId": "A"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum(increase(license_overage_checkouts_total[1h])) * 100",
           "legendFormat": "Overage Cost",
           "refId": "B"
@@ -985,7 +985,7 @@
       ],
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "1000",
           "legendFormat": "Commit Cost",
           "refId": "A",
@@ -993,7 +993,7 @@
           "instant": true
         },
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum by (tool) (increase(license_overage_checkouts_total[24h])) * 100",
           "legendFormat": "Overage Cost",
           "refId": "B",
@@ -1001,7 +1001,7 @@
           "instant": true
         },
         {
-          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "sum by (tool) (increase(license_overage_checkouts_total[24h])) * 100 + 1000",
           "legendFormat": "Total Cost",
           "refId": "C",
@@ -1015,7 +1015,22 @@
   "schemaVersion": 39,
   "style": "dark",
   "tags": ["license", "business", "costs", "overage"],
-  "templating": { "list": [] },
+  "templating": {
+    "list": [
+      {
+        "hide": 0,
+        "includeAll": false,
+        "label": "Datasource",
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      }
+    ]
+  },
   "time": { "from": "now-6h", "to": "now" },
   "timezone": "",
   "title": "License Business Metrics",
