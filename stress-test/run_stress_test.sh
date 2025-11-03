@@ -135,24 +135,36 @@ esac
 echo ""
 echo -e "${BLUE}Tool Selection:${NC}"
 echo "1) Random (mix of all tools)"
-echo "2) CAD Tool"
-echo "3) IDE Tool"
-echo "4) Sim Tool"
+echo "2) Vector - DaVinci Configurator SE"
+echo "3) Vector - DaVinci Configurator IDE"
+echo "4) Greenhills - Multi 8.2"
+echo "5) Vector - ASAP2 v20"
+echo "6) Vector - DaVinci Teams"
+echo "7) Vector - VTT"
 echo ""
-read -p "Enter choice [1-4]: " tool_choice
+read -p "Enter choice [1-7]: " tool_choice
 
 case $tool_choice in
     1)
         TOOL="random"
         ;;
     2)
-        TOOL="cad_tool"
+        TOOL="Vector - DaVinci Configurator SE"
         ;;
     3)
-        TOOL="ide_tool"
+        TOOL="Vector - DaVinci Configurator IDE"
         ;;
     4)
-        TOOL="sim_tool"
+        TOOL="Greenhills - Multi 8.2"
+        ;;
+    5)
+        TOOL="Vector - ASAP2 v20"
+        ;;
+    6)
+        TOOL="Vector - DaVinci Teams"
+        ;;
+    7)
+        TOOL="Vector - VTT"
         ;;
     *)
         TOOL="random"

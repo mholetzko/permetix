@@ -24,7 +24,7 @@ struct Args {
     #[arg(short = 'n', long, default_value = "100")]
     operations: usize,
 
-    /// Tool to test (cad_tool, ide_tool, sim_tool, or random)
+    /// Tool to test (specific tool name or "random" for all)
     #[arg(short, long, default_value = "random")]
     tool: String,
 
@@ -163,7 +163,14 @@ async fn get_status(client: &Client, base_url: &str) -> Result<Vec<StatusRespons
 }
 
 fn get_random_tool() -> &'static str {
-    let tools = ["cad_tool", "ide_tool", "sim_tool"];
+    let tools = [
+        "Vector - DaVinci Configurator SE",
+        "Vector - DaVinci Configurator IDE",
+        "Greenhills - Multi 8.2",
+        "Vector - ASAP2 v20",
+        "Vector - DaVinci Teams",
+        "Vector - VTT",
+    ];
     let mut rng = rand::thread_rng();
     tools[rng.gen_range(0..tools.len())]
 }
