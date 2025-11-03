@@ -1,6 +1,6 @@
 # License Server Client Libraries
 
-Multi-language client libraries for integrating with the Mercedes-Benz License Server.
+Multi-language client libraries for integrating with the Cloud License Server.
 
 ## 🚀 Quick Start
 

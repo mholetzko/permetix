@@ -1,6 +1,6 @@
 # Rust License Client
 
-Modern, idiomatic Rust library for integrating with the Mercedes-Benz License Server.
+Modern, idiomatic Rust library for integrating with the Cloud License Server.
 
 ## Features
 

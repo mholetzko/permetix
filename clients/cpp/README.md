@@ -1,6 +1,6 @@
 # C++ License Client
 
-Modern C++17 library for integrating with the Mercedes-Benz License Server.
+Modern C++17 library for integrating with the Cloud License Server.
 
 ## Features
 

@@ -13,7 +13,7 @@ This demo is designed for automotive companies to understand how cloud DevOps lo
 
 ### 📊 Interactive Presentation
 - **Reveal.js-based presentation** comparing Automotive vs Cloud DevOps
-- Mercedes-Benz styled design
+- Clean, professional design
 - 15 professional slides covering key differences
 - Access at `/presentation`
 
@@ -287,7 +287,7 @@ See [clients/README.md](clients/README.md) for integration guides.
 │       ├── overview.html    # DevOps comparison page
 │       ├── config.html      # Budget configuration
 │       ├── app.js           # Frontend JavaScript
-│       └── style.css        # Mercedes-Benz styling
+│       └── style.css        # Professional styling
 ├── tests/
 │   ├── test_licenses.py     # Backend tests
 │   └── test_frontend.py     # Frontend tests
@@ -338,7 +338,7 @@ MIT License - feel free to use this for your own demos and presentations.
 ## 🙏 Acknowledgments
 
 - Built with FastAPI, Prometheus, Grafana, Loki, and Reveal.js
-- Inspired by Mercedes-Benz design principles
+- Clean, minimal design principles
 - Created to bridge the gap between Automotive and Cloud DevOps practices
 
 

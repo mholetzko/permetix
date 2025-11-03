@@ -1,6 +1,6 @@
 # Python License Client
 
-Pythonic client library for integrating with the Mercedes-Benz License Server.
+Pythonic client library for integrating with the Cloud License Server.
 
 ## Features
 

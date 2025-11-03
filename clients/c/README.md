@@ -1,6 +1,6 @@
 # C License Client
 
-Simple C library for integrating with the Mercedes-Benz License Server.
+Simple C library for integrating with the Cloud License Server.
 
 ## Features
 
