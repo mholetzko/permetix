@@ -1,0 +1,40 @@
+# Automatically label PRs based on changed files
+
+'documentation':
+  - '**/*.md'
+  - 'docs/**/*'
+  - 'DEPLOYMENT.md'
+
+'frontend':
+  - 'app/static/**/*.html'
+  - 'app/static/**/*.css'
+  - 'app/static/**/*.js'
+
+'backend':
+  - 'app/**/*.py'
+  - '!app/static/**'
+
+'tests':
+  - 'tests/**/*'
+  - '**/*test*.py'
+
+'ci/cd':
+  - '.github/workflows/**'
+  - 'Dockerfile'
+  - 'docker-compose.yml'
+  - 'fly.toml'
+
+'dependencies':
+  - 'requirements.txt'
+  - 'package*.json'
+
+'observability':
+  - 'prometheus.yml'
+  - 'loki-config.yml'
+  - 'promtail-config.yml'
+  - 'grafana/**/*'
+
+'database':
+  - 'app/db.py'
+  - '**/migrations/**'
+
