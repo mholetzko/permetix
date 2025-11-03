@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metrics Dashboard - License Server</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header-nav {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .header-nav a:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 60px auto 0;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-title {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 1.5em;
+            margin: 40px 0 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .raw-metrics {
+            background: #2d3748;
+            border-radius: 15px;
+            padding: 25px;
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            max-height: 600px;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .raw-metrics::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .raw-metrics::-webkit-scrollbar-track {
+            background: #1a202c;
+            border-radius: 10px;
+        }
+
+        .raw-metrics::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 10px;
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 18px;
+            padding: 40px;
+        }
+
+        .error {
+            background: #fc8181;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .metric-change {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .metric-change.up {
+            color: #48bb78;
+        }
+
+        .metric-change.down {
+            color: #f56565;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-nav">
+        <a href="/">← Back to Dashboard</a>
+    </div>
+
+    <div class="container">
+        <h1>📊 Real-time Metrics</h1>
+        
+        <div id="key-metrics" class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-title">Total Borrows</div>
+                <div class="metric-value" id="total-borrows">-</div>
+                <div class="metric-label">All time</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-title">Active Licenses</div>
+                <div class="metric-value" id="active-licenses">-</div>
+                <div class="metric-label">Currently borrowed</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-title">Success Rate</div>
+                <div class="metric-value" id="success-rate">-</div>
+                <div class="metric-label">Borrow success %</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-title">Overage Checkouts</div>
+                <div class="metric-value" id="overage-count">-</div>
+                <div class="metric-label">Total overage borrows</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Raw Prometheus Metrics</h2>
+        <pre id="raw-metrics" class="raw-metrics">Loading metrics...</pre>
+    </div>
+
+    <button class="refresh-btn" onclick="loadMetrics()">🔄 Refresh</button>
+
+    <script>
+        let previousMetrics = {};
+
+        async function loadMetrics() {
+            try {
+                const response = await fetch('/metrics');
+                const text = await response.text();
+                
+                // Display raw metrics
+                document.getElementById('raw-metrics').textContent = text;
+                
+                // Parse and display key metrics
+                parseMetrics(text);
+                
+            } catch (error) {
+                document.getElementById('raw-metrics').innerHTML = 
+                    `<div class="error">Error loading metrics: ${error.message}</div>`;
+            }
+        }
+
+        function parseMetrics(metricsText) {
+            const lines = metricsText.split('\n');
+            let metrics = {
+                totalBorrows: 0,
+                activeLicenses: 0,
+                attempts: 0,
+                successes: 0,
+                overageCount: 0
+            };
+
+            lines.forEach(line => {
+                if (line.startsWith('#') || line.trim() === '') return;
+
+                // Parse license_borrow_success_total
+                if (line.includes('license_borrow_success_total{')) {
+                    const match = line.match(/license_borrow_success_total\{[^}]+\}\s+([\d.]+)/);
+                    if (match) metrics.successes += parseFloat(match[1]);
+                }
+
+                // Parse license_borrow_attempts_total
+                if (line.includes('license_borrow_attempts_total{')) {
+                    const match = line.match(/license_borrow_attempts_total\{[^}]+\}\s+([\d.]+)/);
+                    if (match) metrics.attempts += parseFloat(match[1]);
+                }
+
+                // Parse licenses_borrowed (active)
+                if (line.includes('licenses_borrowed{')) {
+                    const match = line.match(/licenses_borrowed\{[^}]+\}\s+([\d.]+)/);
+                    if (match) metrics.activeLicenses += parseFloat(match[1]);
+                }
+
+                // Parse license_overage_checkouts_total
+                if (line.includes('license_overage_checkouts_total{')) {
+                    const match = line.match(/license_overage_checkouts_total\{[^}]+\}\s+([\d.]+)/);
+                    if (match) metrics.overageCount += parseFloat(match[1]);
+                }
+            });
+
+            metrics.totalBorrows = metrics.successes;
+
+            // Update UI
+            document.getElementById('total-borrows').textContent = 
+                Math.round(metrics.totalBorrows).toLocaleString();
+            document.getElementById('active-licenses').textContent = 
+                Math.round(metrics.activeLicenses);
+            document.getElementById('overage-count').textContent = 
+                Math.round(metrics.overageCount);
+
+            const successRate = metrics.attempts > 0 
+                ? ((metrics.successes / metrics.attempts) * 100).toFixed(1)
+                : '100';
+            document.getElementById('success-rate').textContent = successRate + '%';
+
+            previousMetrics = metrics;
+        }
+
+        // Auto-refresh every 10 seconds
+        setInterval(loadMetrics, 10000);
+
+        // Initial load
+        loadMetrics();
+    </script>
+</body>
+</html>
+
