@@ -34,7 +34,13 @@ def get_connection(readonly: bool = False) -> Iterator[sqlite3.Connection]:
         conn.close()
 
 
-def initialize_database(total_by_tool: Optional[dict] = None) -> None:
+def initialize_database(tools_config: Optional[List[dict]] = None) -> None:
+    """
+    Initialize database with optional seed data.
+    
+    Args:
+        tools_config: List of dicts with keys: tool, total, commit_qty, max_overage, commit_price (optional), overage_price_per_license (optional)
+    """
     with get_connection(readonly=False) as conn:
         cur = conn.cursor()
         cur.execute(
@@ -84,13 +90,18 @@ def initialize_database(total_by_tool: Optional[dict] = None) -> None:
             )
             """
         )
-        if total_by_tool:
-            for tool, total in total_by_tool.items():
-                commit_val = max(1, int(total * 0.8))  # at least 1, or 80% of total
-                max_overage_val = max(1, int(total * 0.2))  # at least 1, or 20% of total
+        if tools_config:
+            for config in tools_config:
+                tool = config["tool"]
+                total = config["total"]
+                commit_qty = config.get("commit_qty", max(1, int(total * 0.8)))
+                max_overage = config.get("max_overage", max(1, int(total * 0.2)))
+                commit_price = config.get("commit_price", 1000.0)
+                overage_price = config.get("overage_price_per_license", 100.0)
+                
                 cur.execute(
                     "INSERT OR IGNORE INTO licenses(tool, total, borrowed, commit_qty, max_overage, commit_price, overage_price_per_license) VALUES (?, ?, 0, ?, ?, ?, ?)",
-                    (tool, int(total), commit_val, max_overage_val, 1000.0, 100.0),  # default prices: $1000 commit, $100 per overage license
+                    (tool, int(total), commit_qty, max_overage, commit_price, overage_price),
                 )
         # seed demo user if empty
         cur.execute("SELECT COUNT(1) AS c FROM users")

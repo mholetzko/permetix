@@ -16,8 +16,8 @@ def test_root_html_and_static_accessible():
 
         r = client.get("/")
         assert r.status_code == 200
-        assert "Mercedes" in r.text
-        assert "License Server Demo" in r.text
+        assert "Cloud License Server" in r.text
+        assert "Matthias Holetzko" in r.text
 
         css = client.get("/static/style.css")
         assert css.status_code == 200

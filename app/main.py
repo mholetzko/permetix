@@ -100,8 +100,17 @@ class BudgetConfigRequest(BaseModel):
 def startup_event() -> None:
     # Seed some tools unless running tests
     if os.getenv("LICENSE_DB_SEED", "true").lower() == "true":
-        initialize_database({"cad_tool": 5, "simulation": 3, "analysis": 2})
-        logger.info("database initialized with seed data")
+        # Seed with automotive software license products
+        tools_config = [
+            {"tool": "Vector - DaVinci Configurator SE", "total": 20, "commit_qty": 5, "max_overage": 15, "commit_price": 5000.0, "overage_price_per_license": 500.0},
+            {"tool": "Vector - DaVinci Configurator IDE", "total": 10, "commit_qty": 10, "max_overage": 0, "commit_price": 3000.0, "overage_price_per_license": 0.0},
+            {"tool": "Greenhills - Multi 8.2", "total": 20, "commit_qty": 5, "max_overage": 15, "commit_price": 8000.0, "overage_price_per_license": 800.0},
+            {"tool": "Vector - ASAP2 v20", "total": 20, "commit_qty": 5, "max_overage": 15, "commit_price": 4000.0, "overage_price_per_license": 400.0},
+            {"tool": "Vector - DaVinci Teams", "total": 10, "commit_qty": 10, "max_overage": 0, "commit_price": 2000.0, "overage_price_per_license": 0.0},
+            {"tool": "Vector - VTT", "total": 10, "commit_qty": 10, "max_overage": 0, "commit_price": 2500.0, "overage_price_per_license": 0.0},
+        ]
+        initialize_database(tools_config)
+        logger.info("database initialized with seed data for automotive tools")
     else:
         initialize_database()
         logger.info("database initialized without seed data")

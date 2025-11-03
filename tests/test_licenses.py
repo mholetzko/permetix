@@ -19,7 +19,7 @@ def make_app_with_seed():
     from app.main import app
     from app.db import initialize_database
 
-    initialize_database({"cad_tool": 2})
+    initialize_database([{"tool": "cad_tool", "total": 2, "commit_qty": 1, "max_overage": 1}])
     return app
 
 
