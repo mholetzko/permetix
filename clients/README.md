@@ -2,7 +2,27 @@
 
 Multi-language client libraries for integrating with the Mercedes-Benz License Server.
 
+## 🚀 Quick Start
+
+**Interactive launcher for all clients:**
+
+```bash
+./clients/launch_examples.sh
+```
+
+This will let you choose:
+1. Language (Python, C, C++, Rust)
+2. Target (localhost, Fly.io, custom)
+3. Automatically builds and runs the example
+
 ## Available Clients
+
+### 🐍 [Python Client](python/)
+- Simple, Pythonic API with context managers
+- Type hints for IDE support
+- Only requires `requests` library
+- Perfect for web apps and scripts
+- **Use case:** Flask/Django apps, data pipelines, automation
 
 ### 🔷 [C Client](c/)
 - Simple ANSI C library
@@ -18,14 +38,21 @@ Multi-language client libraries for integrating with the Mercedes-Benz License S
 - CMake and Makefile support
 - **Use case:** Modern desktop applications, game engines
 
-### 🔷 [Rust Client](rust/)
+### 🦀 [Rust Client](rust/)
 - Async/await with tokio
 - Memory-safe with zero-cost abstractions
 - Strong type system
 - Cargo for easy integration
 - **Use case:** High-performance services, CLI tools
 
-## Quick Start
+## Quick Start (Individual Clients)
+
+### Python
+```bash
+cd clients/python
+pip install -r requirements.txt
+python example.py
+```
 
 ### C
 ```bash
@@ -49,19 +76,32 @@ cargo run
 
 ## Feature Comparison
 
-| Feature | C | C++ | Rust |
-|---------|---|-----|------|
-| Async Support | ❌ | ❌ | ✅ |
-| RAII/Auto-return | ❌ | ✅ | ✅ |
-| Memory Safety | Manual | Manual | Guaranteed |
-| Error Handling | Return codes | Exceptions | Result<T> |
-| Dependencies | libcurl | libcurl, jsoncpp | reqwest, tokio |
-| Thread Safety | Manual | Manual | Guaranteed |
-| Performance | ⚡⚡⚡ | ⚡⚡⚡ | ⚡⚡⚡ |
+| Feature | Python | C | C++ | Rust |
+|---------|--------|---|-----|------|
+| Async Support | ❌ | ❌ | ❌ | ✅ |
+| Context Manager | ✅ | ❌ | ✅ (RAII) | ✅ |
+| Memory Safety | GC | Manual | Manual | Guaranteed |
+| Error Handling | Exceptions | Return codes | Exceptions | Result<T> |
+| Dependencies | requests | libcurl | libcurl, jsoncpp | reqwest, tokio |
+| Type Hints | ✅ | ❌ | ✅ | ✅ |
+| Ease of Use | ⭐⭐⭐ | ⭐ | ⭐⭐ | ⭐⭐ |
+| Performance | ⭐⭐ | ⚡⚡⚡ | ⚡⚡⚡ | ⚡⚡⚡ |
 
 ## Common Usage Pattern
 
 All clients follow a similar pattern:
+
+### Python
+```python
+from license_client import LicenseClient
+
+client = LicenseClient("http://localhost:8000")
+
+with client.borrow("cad_tool", "user") as license:
+    # Use license
+    pass
+# Automatically returned
+```
 
 ### C
 ```c
@@ -162,6 +202,11 @@ All clients interact with these endpoints:
 
 ## Requirements
 
+### Python
+```bash
+pip install requests
+```
+
 ### C
 ```bash
 # Ubuntu/Debian
@@ -210,6 +255,13 @@ Each client has detailed documentation:
 - [Rust README](rust/README.md) - Async patterns, safety guarantees
 
 ## Choosing a Client
+
+**Choose Python if:**
+- Building web applications (Flask, Django, FastAPI)
+- Need rapid development and easy integration
+- Want simple, readable code
+- Working on data pipelines or automation
+- Prefer minimal dependencies
 
 **Choose C if:**
 - Working with legacy codebases

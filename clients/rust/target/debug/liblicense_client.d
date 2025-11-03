@@ -1,0 +1,1 @@
+/Users/matthiasholetzko/Documents/Software-Projects/Experiment-MB-Presentation/clients/rust/target/debug/liblicense_client.rlib: /Users/matthiasholetzko/Documents/Software-Projects/Experiment-MB-Presentation/clients/rust/src/lib.rs
