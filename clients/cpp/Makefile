@@ -2,7 +2,18 @@
 
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2
-LDFLAGS = -lcurl -ljsoncpp
+
+# Auto-detect platform and set paths
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+    # macOS - check for Homebrew paths
+    HOMEBREW_PREFIX := $(shell brew --prefix 2>/dev/null || echo /usr/local)
+    CXXFLAGS += -I$(HOMEBREW_PREFIX)/include
+    LDFLAGS = -L$(HOMEBREW_PREFIX)/lib -lcurl -ljsoncpp
+else
+    # Linux
+    LDFLAGS = -lcurl -ljsoncpp
+endif
 
 TARGET = license_client_example
 SOURCES = license_client.cpp example.cpp

@@ -17,11 +17,28 @@ Modern C++17 library for integrating with the Mercedes-Benz License Server.
 # Ubuntu/Debian
 sudo apt-get install libcurl4-openssl-dev libjsoncpp-dev cmake
 
-# macOS
+# macOS (if jsoncpp is not available, use nlohmann-json instead)
 brew install curl jsoncpp cmake
+# OR
+brew install curl nlohmann-json cmake
 
 # Fedora/RHEL
 sudo dnf install libcurl-devel jsoncpp-devel cmake
+```
+
+### macOS Installation Issue?
+
+If you get "json/json.h not found" on macOS, install dependencies:
+
+```bash
+# Check if jsoncpp is installed
+brew list jsoncpp || brew install jsoncpp
+
+# If still not working, find the include path
+brew info jsoncpp
+
+# You may need to add include path to Makefile
+# Add: -I/opt/homebrew/include
 ```
 
 ## Build
