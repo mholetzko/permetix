@@ -27,7 +27,21 @@ cargo build --release
 
 ## Usage
 
-### Run Example
+### Run Example (Interactive)
+
+The easiest way to run the example:
+
+```bash
+cd clients/rust
+./run_example.sh
+```
+
+This interactive script will:
+1. Check for Rust/Cargo
+2. Let you choose the target (localhost, Fly.io, custom)
+3. Run the example (builds automatically via cargo)
+
+### Run Example (Manual)
 
 ```bash
 # Against localhost

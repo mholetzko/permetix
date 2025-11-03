@@ -32,7 +32,22 @@ make
 
 ## Usage
 
-### Run Example
+### Run Example (Interactive)
+
+The easiest way to run the example:
+
+```bash
+cd clients/c
+./run_example.sh
+```
+
+This interactive script will:
+1. Check for dependencies (libcurl)
+2. Build the client if needed
+3. Let you choose the target (localhost, Fly.io, custom)
+4. Run the example
+
+### Run Example (Manual)
 
 ```bash
 # Against localhost
