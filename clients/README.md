@@ -47,6 +47,34 @@ This will let you choose:
 
 ## Quick Start (Individual Clients)
 
+Each client has an interactive `run_example.sh` script:
+
+### Python
+```bash
+cd clients/python
+./run_example.sh
+```
+
+### C
+```bash
+cd clients/c
+./run_example.sh
+```
+
+### C++
+```bash
+cd clients/cpp
+./run_example.sh
+```
+
+### Rust
+```bash
+cd clients/rust
+./run_example.sh
+```
+
+**Or manually:**
+
 ### Python
 ```bash
 cd clients/python

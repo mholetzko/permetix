@@ -28,7 +28,22 @@ pip install -e .
 
 ## Usage
 
-### Run Example
+### Run Example (Interactive)
+
+The easiest way to run the example:
+
+```bash
+cd clients/python
+./run_example.sh
+```
+
+This interactive script will:
+1. Check for dependencies (requests)
+2. Install requests if needed
+3. Let you choose the target (localhost, Fly.io, custom)
+4. Run the example
+
+### Run Example (Manual)
 
 ```bash
 # Against localhost
