@@ -783,7 +783,15 @@ def get_customers():
                 }
         
         # Multi-tenant tables exist, get real data
-        customers = get_vendor_customers("vector")
+        customers = get_vendor_customers("techvendor")
+        if not customers:
+            # Fallback to demo data if none found
+            return {
+                "customers": [
+                    {"tenant_id": "acme", "company_name": "Acme Corporation", "domain": "acme.com", "crm_id": "CRM-ACME-001", "active_licenses": 3, "status": "active"},
+                    {"tenant_id": "globex", "company_name": "Globex Industries", "domain": "globex.com", "crm_id": "CRM-GLOBEX-002", "active_licenses": 2, "status": "active"}
+                ]
+            }
         return {"customers": customers}
     except Exception as e:
         logger.error(f"Error getting customers: {e}")
