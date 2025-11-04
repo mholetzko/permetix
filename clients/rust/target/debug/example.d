@@ -1,1 +1,0 @@
-/Users/matthiasholetzko/Documents/Software-Projects/Experiment-MB-Presentation/clients/rust/target/debug/example: /Users/matthiasholetzko/Documents/Software-Projects/Experiment-MB-Presentation/clients/rust/src/lib.rs /Users/matthiasholetzko/Documents/Software-Projects/Experiment-MB-Presentation/clients/rust/src/main.rs
