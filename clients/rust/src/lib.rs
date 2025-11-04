@@ -38,6 +38,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use thiserror::Error;
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
+use urlencoding::encode;
 
 /// Custom error type for license operations
 #[derive(Error, Debug)]
@@ -294,7 +295,8 @@ impl LicenseClient {
     /// * `tool` - Tool name
     pub async fn get_status(&self, tool: impl Into<String>) -> Result<LicenseStatus> {
         let tool = tool.into();
-        let url = format!("{}/licenses/{}/status", self.base_url, tool);
+        let encoded_tool = encode(&tool);
+        let url = format!("{}/licenses/{}/status", self.base_url, encoded_tool);
         
         let response = self.client.get(&url).send().await?;
         
