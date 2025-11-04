@@ -752,6 +752,30 @@ def list_api_keys(tenant_id: Optional[str] = None) -> List[dict]:
 # Vendor-Controlled Budget Configuration
 # ============================================================================
 
+def _ensure_vendor_customer_columns(conn) -> None:
+    """Ensure vendor_* and customer_* columns exist on licenses table (for existing DBs)."""
+    cur = conn.cursor()
+    cur.execute("PRAGMA table_info(licenses)")
+    cols = {row[1] for row in cur.fetchall()}
+    to_add = []
+    if "vendor_total" not in cols:
+        to_add.append("ALTER TABLE licenses ADD COLUMN vendor_total INTEGER")
+    if "vendor_commit_qty" not in cols:
+        to_add.append("ALTER TABLE licenses ADD COLUMN vendor_commit_qty INTEGER")
+    if "vendor_max_overage" not in cols:
+        to_add.append("ALTER TABLE licenses ADD COLUMN vendor_max_overage INTEGER")
+    if "customer_total" not in cols:
+        to_add.append("ALTER TABLE licenses ADD COLUMN customer_total INTEGER")
+    if "customer_commit_qty" not in cols:
+        to_add.append("ALTER TABLE licenses ADD COLUMN customer_commit_qty INTEGER")
+    if "customer_max_overage" not in cols:
+        to_add.append("ALTER TABLE licenses ADD COLUMN customer_max_overage INTEGER")
+    for stmt in to_add:
+        cur.execute(stmt)
+    if to_add:
+        conn.commit()
+
+
 def set_vendor_budget(tool: str, total: int, commit_qty: int, max_overage: int) -> bool:
     """
     Vendor sets the maximum budget for a tool.
@@ -768,24 +792,39 @@ def set_vendor_budget(tool: str, total: int, commit_qty: int, max_overage: int) 
     """
     with get_connection(False) as conn:
         cur = conn.cursor()
-        
-        # Update vendor limits
-        cur.execute(
-            """
-            UPDATE licenses
-            SET vendor_total = ?,
-                vendor_commit_qty = ?,
-                vendor_max_overage = ?,
-                total = ?,
-                commit_qty = ?,
-                max_overage = ?
-            WHERE tool = ?
-            """,
-            (total, commit_qty, max_overage, total, commit_qty, max_overage, tool)
-        )
-        
-        conn.commit()
-        return cur.rowcount > 0
+        # Ensure columns exist for older databases
+        _ensure_vendor_customer_columns(conn)
+        try:
+            # Update vendor limits + active
+            cur.execute(
+                """
+                UPDATE licenses
+                SET vendor_total = ?,
+                    vendor_commit_qty = ?,
+                    vendor_max_overage = ?,
+                    total = ?,
+                    commit_qty = ?,
+                    max_overage = ?
+                WHERE tool = ?
+                """,
+                (total, commit_qty, max_overage, total, commit_qty, max_overage, tool)
+            )
+            conn.commit()
+            return cur.rowcount > 0
+        except Exception:
+            # Fallback for legacy schema: update only active fields
+            cur.execute(
+                """
+                UPDATE licenses
+                SET total = ?,
+                    commit_qty = ?,
+                    max_overage = ?
+                WHERE tool = ?
+                """,
+                (total, commit_qty, max_overage, tool)
+            )
+            conn.commit()
+            return cur.rowcount > 0
 
 
 def set_customer_budget_restrictions(tool: str, total: int = None, commit_qty: int = None, max_overage: int = None) -> tuple[bool, str]:
@@ -803,6 +842,8 @@ def set_customer_budget_restrictions(tool: str, total: int = None, commit_qty: i
     """
     with get_connection(False) as conn:
         cur = conn.cursor()
+        # Ensure columns for older databases
+        _ensure_vendor_customer_columns(conn)
         
         # Get current vendor limits
         cur.execute(
@@ -845,19 +886,32 @@ def set_customer_budget_restrictions(tool: str, total: int = None, commit_qty: i
             max_overage = vendor_overage
         
         # Apply customer restrictions
-        cur.execute(
-            """
-            UPDATE licenses
-            SET customer_total = ?,
-                customer_commit_qty = ?,
-                customer_max_overage = ?,
-                total = ?,
-                commit_qty = ?,
-                max_overage = ?
-            WHERE tool = ?
-            """,
-            (total, commit_qty, max_overage, total, commit_qty, max_overage, tool)
-        )
+        try:
+            cur.execute(
+                """
+                UPDATE licenses
+                SET customer_total = ?,
+                    customer_commit_qty = ?,
+                    customer_max_overage = ?,
+                    total = ?,
+                    commit_qty = ?,
+                    max_overage = ?
+                WHERE tool = ?
+                """,
+                (total, commit_qty, max_overage, total, commit_qty, max_overage, tool)
+            )
+        except Exception:
+            # Legacy schema: update only active fields
+            cur.execute(
+                """
+                UPDATE licenses
+                SET total = ?,
+                    commit_qty = ?,
+                    max_overage = ?
+                WHERE tool = ?
+                """,
+                (total, commit_qty, max_overage, tool)
+            )
         
         conn.commit()
         return True, "Success"
