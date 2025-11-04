@@ -301,7 +301,13 @@ def startup_event() -> None:
 def borrow(req: BorrowRequest, request: Request):
     # Validate HMAC signature if present
     from app.security import validate_signature
-    is_valid, error_msg = validate_signature(request, req.tool, req.user, require=False)
+    # Extract API key from Authorization header (Bearer <key>)
+    auth_header = request.headers.get("Authorization", "")
+    api_key = ""
+    if auth_header.lower().startswith("bearer "):
+        api_key = auth_header.split(" ", 1)[1].strip()
+    
+    is_valid, error_msg = validate_signature(request, req.tool, req.user, api_key=api_key, require=False)
     if not is_valid:
         logger.warning("Security check failed: %s", error_msg)
         raise HTTPException(status_code=403, detail=f"Security validation failed: {error_msg}")
