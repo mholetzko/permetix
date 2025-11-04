@@ -8,11 +8,11 @@ UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
     # macOS - check for Homebrew paths
     HOMEBREW_PREFIX := $(shell brew --prefix 2>/dev/null || echo /usr/local)
-    CXXFLAGS += -I$(HOMEBREW_PREFIX)/include
-    LDFLAGS = -L$(HOMEBREW_PREFIX)/lib -lcurl -ljsoncpp
+    CXXFLAGS += -I$(HOMEBREW_PREFIX)/include -I$(HOMEBREW_PREFIX)/opt/openssl@3/include
+    LDFLAGS = -L$(HOMEBREW_PREFIX)/lib -L$(HOMEBREW_PREFIX)/opt/openssl@3/lib -lcurl -ljsoncpp -lcrypto
 else
     # Linux
-    LDFLAGS = -lcurl -ljsoncpp
+    LDFLAGS = -lcurl -ljsoncpp -lcrypto
 endif
 
 TARGET = license_client_example
