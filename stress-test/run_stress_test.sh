@@ -134,13 +134,12 @@ esac
 
 echo ""
 echo -e "${BLUE}Tool Selection:${NC}"
-echo "1) Random (mix of all tools)"
-echo "2) Vector - DaVinci Configurator SE"
-echo "3) Vector - DaVinci Configurator IDE"
-echo "4) Greenhills - Multi 8.2"
-echo "5) Vector - ASAP2 v20"
-echo "6) Vector - DaVinci Teams"
-echo "7) Vector - VTT"
+  echo "1) Random (mix of all tools)"
+  echo "2) ECU Development Suite"
+  echo "3) GreenHills Multi IDE"
+  echo "4) AUTOSAR Configuration Tool"
+  echo "5) CAN Bus Analyzer Pro"
+  echo "6) Model-Based Design Studio"
 echo ""
 read -p "Enter choice [1-7]: " tool_choice
 
@@ -149,22 +148,19 @@ case $tool_choice in
         TOOL="random"
         ;;
     2)
-        TOOL="Vector - DaVinci Configurator SE"
+        TOOL="ECU Development Suite"
         ;;
     3)
-        TOOL="Vector - DaVinci Configurator IDE"
+        TOOL="GreenHills Multi IDE"
         ;;
     4)
-        TOOL="Greenhills - Multi 8.2"
+        TOOL="AUTOSAR Configuration Tool"
         ;;
     5)
-        TOOL="Vector - ASAP2 v20"
+        TOOL="CAN Bus Analyzer Pro"
         ;;
     6)
-        TOOL="Vector - DaVinci Teams"
-        ;;
-    7)
-        TOOL="Vector - VTT"
+        TOOL="Model-Based Design Studio"
         ;;
     *)
         TOOL="random"

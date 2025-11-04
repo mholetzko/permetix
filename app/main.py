@@ -281,14 +281,13 @@ class ProvisionLicenseRequest(BaseModel):
 def startup_event() -> None:
     # Seed some tools unless running tests
     if os.getenv("LICENSE_DB_SEED", "true").lower() == "true":
-        # Seed with automotive software license products
+        # Seed with automotive software development tools
         tools_config = [
-            {"tool": "Vector - DaVinci Configurator SE", "total": 20, "commit_qty": 5, "max_overage": 15, "commit_price": 5000.0, "overage_price_per_license": 500.0},
-            {"tool": "Vector - DaVinci Configurator IDE", "total": 10, "commit_qty": 10, "max_overage": 0, "commit_price": 3000.0, "overage_price_per_license": 0.0},
-            {"tool": "Greenhills - Multi 8.2", "total": 20, "commit_qty": 5, "max_overage": 15, "commit_price": 8000.0, "overage_price_per_license": 800.0},
-            {"tool": "Vector - ASAP2 v20", "total": 20, "commit_qty": 5, "max_overage": 15, "commit_price": 4000.0, "overage_price_per_license": 400.0},
-            {"tool": "Vector - DaVinci Teams", "total": 10, "commit_qty": 10, "max_overage": 0, "commit_price": 2000.0, "overage_price_per_license": 0.0},
-            {"tool": "Vector - VTT", "total": 10, "commit_qty": 10, "max_overage": 0, "commit_price": 2500.0, "overage_price_per_license": 0.0},
+            {"tool": "ECU Development Suite", "total": 20, "commit_qty": 5, "max_overage": 15, "commit_price": 5000.0, "overage_price_per_license": 500.0},
+            {"tool": "GreenHills Multi IDE", "total": 15, "commit_qty": 10, "max_overage": 5, "commit_price": 8000.0, "overage_price_per_license": 800.0},
+            {"tool": "AUTOSAR Configuration Tool", "total": 12, "commit_qty": 8, "max_overage": 4, "commit_price": 4000.0, "overage_price_per_license": 400.0},
+            {"tool": "CAN Bus Analyzer Pro", "total": 10, "commit_qty": 10, "max_overage": 0, "commit_price": 2000.0, "overage_price_per_license": 0.0},
+            {"tool": "Model-Based Design Studio", "total": 18, "commit_qty": 6, "max_overage": 12, "commit_price": 6000.0, "overage_price_per_license": 600.0},
         ]
         initialize_database(tools_config)
         logger.info("database initialized with seed data for automotive tools")

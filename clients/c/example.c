@@ -9,7 +9,7 @@
 
 int main(int argc, char *argv[]) {
     const char *server_url = "http://localhost:8000";
-    const char *tool = "Vector - DaVinci Configurator SE";
+    const char *tool = "ECU Development Suite";
     const char *user = "c-client-user";
     
     // Allow custom server URL from command line

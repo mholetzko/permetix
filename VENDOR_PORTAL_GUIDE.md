@@ -17,20 +17,20 @@ Also accessible from the home page tile: **"Vendor Portal"**
 
 ## 🏢 What It Shows
 
-### Vendor Perspective (Vector Informatik)
+### Vendor Perspective (TechVendor Software)
 
-**Scenario**: Vector sells DaVinci Configurator licenses to BMW, Mercedes, Audi
+**Scenario**: TechVendor sells automotive software licenses to Acme, Globex, Initech
 
 **Portal Features**:
 1. **Customer Management**
-   - View all customers (BMW, Mercedes, Audi)
+   - View all customers (Acme Corporation, Globex Industries, Initech Systems)
    - See CRM IDs (Salesforce/SAP integration)
    - Track active licenses per customer
    - Monitor customer status
 
 2. **License Provisioning**
    - Select customer from dropdown
-   - Choose product (DaVinci SE, Greenhills Multi, etc.)
+   - Choose product (ECU Dev Suite, GreenHills Multi, etc.)
    - Configure quantities:
      - Total licenses
      - Commit quantity (fixed budget)
@@ -41,10 +41,11 @@ Also accessible from the home page tile: **"Vendor Portal"**
    - Link to CRM opportunity ID
 
 3. **Product Catalog**
-   - DaVinci Configurator SE
-   - DaVinci Configurator IDE
-   - Greenhills Multi 8.2
-   - Vector ASAP2 v20
+   - ECU Development Suite
+   - GreenHills Multi IDE
+   - AUTOSAR Configuration Tool
+   - CAN Bus Analyzer Pro
+   - Model-Based Design Studio
    - Each with default configurations
 
 ---

@@ -12,7 +12,7 @@ using namespace license;
 
 int main(int argc, char* argv[]) {
     const std::string server_url = (argc > 1) ? argv[1] : "http://localhost:8000";
-    const std::string tool = "Vector - DaVinci Configurator SE";
+    const std::string tool = "ECU Development Suite";
     const std::string user = "cpp-client-user";
     
     std::cout << "==========================================="  << std::endl;

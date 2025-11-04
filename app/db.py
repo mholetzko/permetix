@@ -412,9 +412,9 @@ def seed_multitenant_demo_data() -> None:
         
         # Create 3 tenant companies
         tenants = [
-            {"id": "bmw", "name": "BMW AG", "domain": "bmw.com", "crm_id": "CRM-BMW-001"},
-            {"id": "mercedes", "name": "Mercedes-Benz AG", "domain": "mercedes.com", "crm_id": "CRM-MB-002"},
-            {"id": "audi", "name": "Audi AG", "domain": "audi.com", "crm_id": "CRM-AUDI-003"},
+            {"id": "acme", "name": "Acme Corporation", "domain": "acme-corp.com", "crm_id": "CRM-ACME-001"},
+            {"id": "globex", "name": "Globex Industries", "domain": "globex.com", "crm_id": "CRM-GLOBEX-002"},
+            {"id": "initech", "name": "Initech Systems", "domain": "initech.com", "crm_id": "CRM-INITECH-003"},
         ]
         
         for tenant in tenants:
@@ -423,16 +423,16 @@ def seed_multitenant_demo_data() -> None:
                 (tenant["id"], tenant["name"], tenant["domain"], tenant["crm_id"], now)
             )
         
-        # Create Vector as vendor
+        # Create TechVendor as vendor
         cur.execute(
             "INSERT OR IGNORE INTO vendors(vendor_id, vendor_name, contact_email, created_at) VALUES (?, ?, ?, ?)",
-            ("vector", "Vector Informatik GmbH", "sales@vector.com", now)
+            ("techvendor", "TechVendor Software Inc", "sales@techvendor.com", now)
         )
         
         # License packages and licenses for each tenant
         products = [
-            {"id": "davinci-se", "name": "DaVinci Configurator SE", "total": 20, "commit": 5, "overage": 15, "commit_price": 5000.0, "overage_price": 500.0},
-            {"id": "davinci-ide", "name": "DaVinci Configurator IDE", "total": 10, "commit": 10, "overage": 0, "commit_price": 3000.0, "overage_price": 0.0},
+            {"id": "ecu-dev-suite", "name": "ECU Development Suite", "total": 20, "commit": 5, "overage": 15, "commit_price": 5000.0, "overage_price": 500.0},
+            {"id": "greenhills-multi", "name": "GreenHills Multi IDE", "total": 15, "commit": 10, "overage": 5, "commit_price": 8000.0, "overage_price": 800.0},
         ]
         
         for tenant in tenants:
@@ -441,7 +441,7 @@ def seed_multitenant_demo_data() -> None:
                 package_id = f"pkg-{tenant['id']}-{product['id']}-{uuid.uuid4().hex[:8]}"
                 cur.execute(
                     "INSERT OR IGNORE INTO license_packages(package_id, tenant_id, vendor_id, product_id, product_name, crm_opportunity_id, status, provisioned_at) VALUES (?, ?, ?, ?, ?, ?, 'active', ?)",
-                    (package_id, tenant["id"], "vector", product["id"], product["name"], f"CRM-OPP-{tenant['crm_id']}-{product['id']}", now)
+                    (package_id, tenant["id"], "techvendor", product["id"], product["name"], f"CRM-OPP-{tenant['crm_id']}-{product['id']}", now)
                 )
                 
                 # Create license for tenant

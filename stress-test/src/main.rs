@@ -164,12 +164,11 @@ async fn get_status(client: &Client, base_url: &str) -> Result<Vec<StatusRespons
 
 fn get_random_tool() -> &'static str {
     let tools = [
-        "Vector - DaVinci Configurator SE",
-        "Vector - DaVinci Configurator IDE",
-        "Greenhills - Multi 8.2",
-        "Vector - ASAP2 v20",
-        "Vector - DaVinci Teams",
-        "Vector - VTT",
+        "ECU Development Suite",
+        "GreenHills Multi IDE",
+        "AUTOSAR Configuration Tool",
+        "CAN Bus Analyzer Pro",
+        "Model-Based Design Studio",
     ];
     let mut rng = rand::thread_rng();
     tools[rng.gen_range(0..tools.len())]

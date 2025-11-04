@@ -10,7 +10,7 @@ async fn main() -> Result<()> {
         .nth(1)
         .unwrap_or_else(|| "http://localhost:8000".to_string());
     
-    let tool = "Vector - DaVinci Configurator SE";
+    let tool = "ECU Development Suite";
     let user = "rust-client-user";
     
     println!("===========================================");

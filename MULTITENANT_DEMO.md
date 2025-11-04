@@ -3,8 +3,8 @@
 ## Overview
 
 This demo showcases a **multi-tenant SaaS architecture** where:
-- **Vendors** (like Vector) can manage customers and provision licenses
-- **Customers** (like BMW, Mercedes, Audi) each have isolated tenant environments
+- **Vendors** (like TechVendor) can manage customers and provision licenses
+- **Customers** (like Acme, Globex, Initech) each have isolated tenant environments
 - Each tenant has its own subdomain for complete isolation
 
 ## Architecture
@@ -15,12 +15,12 @@ This demo showcases a **multi-tenant SaaS architecture** where:
 └─────────────────────────────────────────────────────────────┘
 
 Vendor Portal                       Customer Tenants
-vendor.localhost:8001               bmw.localhost:8001
-                                    mercedes.localhost:8001
-                                    audi.localhost:8001
+vendor.localhost:8001               acme.localhost:8001
+                                    globex.localhost:8001
+                                    initech.localhost:8001
 
 ┌──────────────────────┐           ┌──────────────────────┐
-│  Vector Vendor       │           │  BMW Tenant          │
+│  TechVendor          │           │  Acme Tenant         │
 │                      │           │                      │
 │  • View customers    │───────▶   │  • View licenses     │
 │  • Provision licenses│           │  • Monitor usage     │
@@ -46,17 +46,17 @@ python multitenant_demo.py
 
 ### 3. Visit the Portals
 
-**Vendor Portal** (Vector):
+**Vendor Portal** (TechVendor):
 - URL: http://vendor.localhost:8001
 - Features:
-  - View all customers (BMW, Mercedes, Audi)
+  - View all customers (Acme, Globex, Initech)
   - Provision new licenses to customers
   - See customer activity
 
 **Customer Tenants**:
-- **BMW**: http://bmw.localhost:8001
-- **Mercedes**: http://mercedes.localhost:8001
-- **Audi**: http://audi.localhost:8001
+- **Acme**: http://acme.localhost:8001
+- **Globex**: http://globex.localhost:8001
+- **Initech**: http://initech.localhost:8001
 
 Each tenant shows:
 - Licensed products
@@ -66,7 +66,7 @@ Each tenant shows:
 
 ## Demo Workflow
 
-### Scenario: Vector Provisions License to BMW
+### Scenario: TechVendor Provisions License to Acme
 
 1. **Open Vendor Portal**:
    ```
@@ -74,7 +74,7 @@ Each tenant shows:
    ```
 
 2. **View Customers**:
-   - See BMW, Mercedes, Audi listed with their CRM IDs
+   - See Acme, Globex, Initech listed with their CRM IDs
    - See how many active licenses each has
 
 3. **Provision New License**:

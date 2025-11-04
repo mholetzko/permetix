@@ -196,15 +196,15 @@
 
     <div class="vendor-container">
       <div class="vendor-header">
-        <h1>🏢 Vector Informatik GmbH</h1>
+        <h1>🏢 TechVendor Software Inc</h1>
         <p>Vendor Portal • Manage Customers & License Provisioning</p>
       </div>
 
       <div class="info-box">
         <p>
-          <strong>🎯 Demo Mode:</strong> This vendor portal demonstrates how software vendors (like Vector) 
-          can manage their customers and provision licenses. In production, each customer would have their 
-          own server instance (e.g., <code>bmw.cloudlicenses.com</code>).
+          <strong>🎯 Demo Mode:</strong> This vendor portal demonstrates how software vendors can 
+          manage their customers and provision licenses. In production, each customer would have their 
+          own server instance (e.g., <code>acme.cloudlicenses.com</code>).
         </p>
       </div>
 
@@ -252,24 +252,29 @@
           </thead>
           <tbody>
             <tr>
-              <td><strong>DaVinci Configurator SE</strong></td>
-              <td><code>davinci-se</code></td>
-              <td>20 total (5 commit, 15 overage) • €5000 commit + €500 per overage</td>
+              <td><strong>ECU Development Suite</strong></td>
+              <td><code>ecu-dev-suite</code></td>
+              <td>20 total (5 commit, 15 overage) • $5000 commit + $500 per overage</td>
             </tr>
             <tr>
-              <td><strong>DaVinci Configurator IDE</strong></td>
-              <td><code>davinci-ide</code></td>
-              <td>10 total (10 commit, 0 overage) • €3000 commit</td>
-            </tr>
-            <tr>
-              <td><strong>Greenhills Multi 8.2</strong></td>
+              <td><strong>GreenHills Multi IDE</strong></td>
               <td><code>greenhills-multi</code></td>
-              <td>20 total (5 commit, 15 overage) • €8000 commit + €800 per overage</td>
+              <td>15 total (10 commit, 5 overage) • $8000 commit + $800 per overage</td>
             </tr>
             <tr>
-              <td><strong>Vector ASAP2 v20</strong></td>
-              <td><code>asap2-v20</code></td>
-              <td>20 total (5 commit, 15 overage) • €4000 commit + €400 per overage</td>
+              <td><strong>AUTOSAR Configuration Tool</strong></td>
+              <td><code>autosar-config</code></td>
+              <td>12 total (8 commit, 4 overage) • $4000 commit + $400 per overage</td>
+            </tr>
+            <tr>
+              <td><strong>CAN Bus Analyzer Pro</strong></td>
+              <td><code>can-analyzer</code></td>
+              <td>10 total (10 commit, 0 overage) • $2000 commit</td>
+            </tr>
+            <tr>
+              <td><strong>Model-Based Design Studio</strong></td>
+              <td><code>model-design</code></td>
+              <td>18 total (6 commit, 12 overage) • $6000 commit + $600 per overage</td>
             </tr>
           </tbody>
         </table>
@@ -283,19 +288,19 @@
         <form id="add-customer-form">
           <div class="form-group">
             <label>Company Name *</label>
-            <input type="text" id="company-name" placeholder="e.g., BMW AG" required>
+            <input type="text" id="company-name" placeholder="e.g., Acme Corporation" required>
           </div>
           <div class="form-group">
             <label>Tenant ID * (lowercase, no spaces)</label>
-            <input type="text" id="tenant-id" placeholder="e.g., bmw" pattern="[a-z0-9-]+" required>
+            <input type="text" id="tenant-id" placeholder="e.g., acme" pattern="[a-z0-9-]+" required>
           </div>
           <div class="form-group">
             <label>Domain</label>
-            <input type="text" id="domain" placeholder="e.g., bmw.com">
+            <input type="text" id="domain" placeholder="e.g., acme-corp.com">
           </div>
           <div class="form-group">
             <label>CRM Account ID</label>
-            <input type="text" id="crm-id" placeholder="e.g., CRM-BMW-001">
+            <input type="text" id="crm-id" placeholder="e.g., CRM-ACME-001">
           </div>
           <div class="form-actions">
             <button type="submit" class="btn">Add Customer</button>
