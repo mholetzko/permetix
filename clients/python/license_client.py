@@ -1,14 +1,18 @@
 """
 License Server Client Library for Python
 
-A simple, Pythonic client for interacting with the Mercedes-Benz license server.
+A simple, Pythonic client for interacting with the cloud license server.
 Supports both synchronous and context manager patterns.
+Includes HMAC-based security for request signing.
 """
 
 from typing import Optional, Dict, List, Any
 from dataclasses import dataclass
 import requests
 from contextlib import contextmanager
+import hmac
+import hashlib
+import time
 
 
 class LicenseError(Exception):
@@ -77,7 +81,7 @@ class LicenseHandle:
 
 class LicenseClient:
     """
-    Main license client class.
+    Main license client class with HMAC security.
     
     Example:
         client = LicenseClient("http://localhost:8000")
@@ -95,17 +99,34 @@ class LicenseClient:
             license.return_license()
     """
     
-    def __init__(self, base_url: str, timeout: int = 10):
+    # Vendor secret - embedded in the client library binary
+    # In production, this would be obfuscated/encrypted
+    VENDOR_SECRET = "techvendor_secret_ecu_2025_demo_xyz789abc123def456"
+    VENDOR_ID = "techvendor"
+    
+    def __init__(self, base_url: str, timeout: int = 10, enable_security: bool = True):
         """
         Initialize the license client.
         
         Args:
             base_url: Base URL of the license server
             timeout: Request timeout in seconds (default: 10)
+            enable_security: Enable HMAC signatures (default: True)
         """
         self.base_url = base_url.rstrip('/')
         self.timeout = timeout
+        self.enable_security = enable_security
         self.session = requests.Session()
+    
+    def _generate_signature(self, tool: str, user: str, timestamp: str) -> str:
+        """Generate HMAC signature for request authentication"""
+        payload = f"{tool}|{user}|{timestamp}"
+        signature = hmac.new(
+            self.VENDOR_SECRET.encode('utf-8'),
+            payload.encode('utf-8'),
+            hashlib.sha256
+        ).hexdigest()
+        return signature
     
     def borrow(self, tool: str, user: str) -> LicenseHandle:
         """
@@ -129,8 +150,19 @@ class LicenseClient:
         url = f"{self.base_url}/licenses/borrow"
         payload = {"tool": tool, "user": user}
         
+        # Add security headers if enabled
+        headers = {}
+        if self.enable_security:
+            timestamp = str(int(time.time()))
+            signature = self._generate_signature(tool, user, timestamp)
+            headers = {
+                "X-Signature": signature,
+                "X-Timestamp": timestamp,
+                "X-Vendor-ID": self.VENDOR_ID
+            }
+        
         try:
-            response = self.session.post(url, json=payload, timeout=self.timeout)
+            response = self.session.post(url, json=payload, headers=headers, timeout=self.timeout)
             
             if response.status_code == 409:
                 raise NoLicensesAvailableError(tool)

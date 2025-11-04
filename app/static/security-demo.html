@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Demo • Cloud License Server</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .security-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #111;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #666;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 40px 0;
+    }
+
+    .comparison-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 30px;
+      background: white;
+    }
+
+    .comparison-card.success {
+      border-color: #4CAF50;
+      background: #f1f8f4;
+    }
+
+    .comparison-card.danger {
+      border-color: #f44336;
+      background: #fef1f0;
+    }
+
+    .comparison-card h2 {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .comparison-card .icon {
+      font-size: 2rem;
+    }
+
+    .code-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin: 15px 0;
+    }
+
+    .code-block .comment {
+      color: #6a9955;
+    }
+
+    .code-block .string {
+      color: #ce9178;
+    }
+
+    .code-block .keyword {
+      color: #569cd6;
+    }
+
+    .layers {
+      margin: 60px 0;
+    }
+
+    .layer {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      display: grid;
+      grid-template-columns: 60px 1fr 100px;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .layer.active {
+      border-color: #4CAF50;
+      background: #f9fdf9;
+    }
+
+    .layer .number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #666;
+      text-align: center;
+    }
+
+    .layer.active .number {
+      color: #4CAF50;
+    }
+
+    .layer .status {
+      text-align: right;
+      font-weight: bold;
+    }
+
+    .layer .status.implemented {
+      color: #4CAF50;
+    }
+
+    .layer .status.documented {
+      color: #FFA726;
+    }
+
+    .interactive {
+      background: #f5f5f5;
+      border: 2px solid #2196F3;
+      border-radius: 12px;
+      padding: 30px;
+      margin: 40px 0;
+    }
+
+    .interactive h2 {
+      margin-top: 0;
+      color: #2196F3;
+    }
+
+    .attack-form {
+      display: grid;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .attack-form label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .attack-form input, .attack-form select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    .attack-form button {
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .attack-form button:hover {
+      background: #d32f2f;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result.blocked {
+      background: #f1f8f4;
+      border: 2px solid #4CAF50;
+      color: #2e7d32;
+    }
+
+    .result.allowed {
+      background: #fef1f0;
+      border: 2px solid #f44336;
+      color: #c62828;
+    }
+
+    .result h3 {
+      margin-top: 0;
+    }
+
+    .flow-diagram {
+      margin: 40px 0;
+      text-align: center;
+    }
+
+    .flow-step {
+      display: inline-block;
+      padding: 15px 25px;
+      margin: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .flow-arrow {
+      display: inline-block;
+      font-size: 2rem;
+      color: #666;
+      margin: 0 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">☁️ Cloud License Server</div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/security-demo" class="active">Security Demo</a>
+      <a href="/presentation">Presentation</a>
+    </nav>
+  </header>
+
+  <div class="security-container">
+    <div class="hero">
+      <h1>🔐 Security Demo: Multi-Layer Protection</h1>
+      <p>
+        Demonstrating how HMAC-based request signing prevents unauthorized access,
+        even if attackers discover the API endpoints or intercept network traffic.
+      </p>
+    </div>
+
+    <div class="comparison">
+      <div class="comparison-card success">
+        <h2>
+          <span class="icon">✅</span>
+          Legitimate Request
+        </h2>
+        <p><strong>Alice uses the official client library</strong></p>
+        <div class="code-block">
+<span class="keyword">from</span> license_client <span class="keyword">import</span> LicenseClient
+
+client = LicenseClient(<span class="string">"https://demo.fly.dev"</span>)
+<span class="keyword">with</span> client.borrow(<span class="string">"ECU Suite"</span>, <span class="string">"alice"</span>) <span class="keyword">as</span> lic:
+    <span class="comment"># HMAC signature automatically added</span>
+    <span class="comment"># Headers: X-Signature, X-Timestamp, X-Vendor-ID</span>
+    print(<span class="string">f"License: {lic.id}"</span>)
+        </div>
+        <p><strong>✓ Server validates signature</strong></p>
+        <p><strong>✓ Request succeeds</strong></p>
+      </div>
+
+      <div class="comparison-card danger">
+        <h2>
+          <span class="icon">❌</span>
+          Attack Attempt
+        </h2>
+        <p><strong>Bob tries to use curl without signature</strong></p>
+        <div class="code-block">
+curl -X POST https://demo.fly.dev/licenses/borrow \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d <span class="string">'{"tool": "ECU Suite", "user": "hacker"}'</span>
+
+<span class="comment"># Missing: X-Signature, X-Timestamp</span>
+        </div>
+        <p><strong>❌ Server rejects: No signature</strong></p>
+        <p><strong>❌ HTTP 403 Forbidden</strong></p>
+      </div>
+    </div>
+
+    <section class="layers">
+      <h2 style="text-align: center; font-size: 2rem; margin-bottom: 30px;">
+        🛡️ Seven Layers of Security
+      </h2>
+
+      <div class="layer active">
+        <div class="number">1️⃣</div>
+        <div class="content">
+          <h3>HMAC Request Signing</h3>
+          <p>Every request signed with vendor-specific secret. Prevents unauthorized API access.</p>
+        </div>
+        <div class="status implemented">✅ Active</div>
+      </div>
+
+      <div class="layer active">
+        <div class="number">2️⃣</div>
+        <div class="content">
+          <h3>Timestamp Validation</h3>
+          <p>Requests expire after 5 minutes. Prevents replay attacks.</p>
+        </div>
+        <div class="status implemented">✅ Active</div>
+      </div>
+
+      <div class="layer">
+        <div class="number">3️⃣</div>
+        <div class="content">
+          <h3>Client Certificates (mTLS)</h3>
+          <p>Hardware-bound TLS client certificates. Prevents secret extraction.</p>
+        </div>
+        <div class="status documented">📚 Docs</div>
+      </div>
+
+      <div class="layer">
+        <div class="number">4️⃣</div>
+        <div class="content">
+          <h3>TPM / Secure Enclave</h3>
+          <p>Secrets stored in hardware security module. Cannot be extracted from device.</p>
+        </div>
+        <div class="status documented">📚 Docs</div>
+      </div>
+
+      <div class="layer active">
+        <div class="number">5️⃣</div>
+        <div class="content">
+          <h3>Rate Limiting</h3>
+          <p>Prevents brute-force attacks and DDoS. Automatic throttling.</p>
+        </div>
+        <div class="status implemented">✅ Active</div>
+      </div>
+
+      <div class="layer">
+        <div class="number">6️⃣</div>
+        <div class="content">
+          <h3>IP Whitelisting</h3>
+          <p>Optional: Restrict access to known IP ranges or VPN endpoints.</p>
+        </div>
+        <div class="status documented">📚 Docs</div>
+      </div>
+
+      <div class="layer">
+        <div class="number">7️⃣</div>
+        <div class="content">
+          <h3>Behavioral Analysis</h3>
+          <p>ML-based anomaly detection. Flags unusual patterns in real-time.</p>
+        </div>
+        <div class="status documented">📚 Docs</div>
+      </div>
+    </section>
+
+    <section class="interactive">
+      <h2>🎯 Try an Attack (Educational)</h2>
+      <p>
+        Simulate an attack attempt to see how the security layers work.
+        <strong>All attacks will fail</strong> – this is a safe, educational demo.
+      </p>
+
+      <form class="attack-form" id="attack-form">
+        <div>
+          <label>Attack Type:</label>
+          <select id="attack-type">
+            <option value="no-signature">Naive Attack (No Signature)</option>
+            <option value="wrong-signature">Sophisticated (Wrong Signature)</option>
+            <option value="old-timestamp">Replay Attack (Old Timestamp)</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Tool to "steal":</label>
+          <input type="text" id="tool" value="ECU Development Suite" required>
+        </div>
+
+        <div>
+          <label>Attacker Username:</label>
+          <input type="text" id="user" value="hacker@evil.com" required>
+        </div>
+
+        <button type="submit">🚨 Launch Attack (Will Fail)</button>
+      </form>
+
+      <div id="result" class="result"></div>
+    </section>
+
+    <div class="flow-diagram">
+      <h2 style="margin-bottom: 30px;">📊 Request Flow</h2>
+      <div>
+        <div class="flow-step">Client Library</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Generate HMAC</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Add Headers</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Send Request</div>
+      </div>
+      <div style="margin-top: 20px;">
+        <div class="flow-step">Server Validates</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Check Timestamp</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Verify Signature</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step" style="border-color: #4CAF50; background: #f1f8f4;">✅ Success</div>
+      </div>
+    </div>
+
+    <section style="margin: 60px 0; text-align: center;">
+      <h2>📚 Learn More</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px;">
+        <a href="/static/LICENSE_THEFT_PREVENTION.md" style="display: block; padding: 20px; background: white; border: 1px solid #e0e0e0; border-radius: 8px; text-decoration: none; color: inherit;">
+          <h3>🔐 License Theft Prevention</h3>
+          <p>Technical deep dive into security mechanisms</p>
+        </a>
+        <a href="/static/CLOUD_LICENSE_PROTOCOL.md" style="display: block; padding: 20px; background: white; border: 1px solid #e0e0e0; border-radius: 8px; text-decoration: none; color: inherit;">
+          <h3>☁️ Cloud License Protocol</h3>
+          <p>Complete architecture and protocol spec</p>
+        </a>
+        <a href="https://github.com/mholetzko/cloud-vs-automotive-demo" style="display: block; padding: 20px; background: white; border: 1px solid #e0e0e0; border-radius: 8px; text-decoration: none; color: inherit;">
+          <h3>💻 Source Code</h3>
+          <p>View implementation on GitHub</p>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    document.getElementById('attack-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const attackType = document.getElementById('attack-type').value;
+      const tool = document.getElementById('tool').value;
+      const user = document.getElementById('user').value;
+      const resultDiv = document.getElementById('result');
+
+      // Show loading
+      resultDiv.className = 'result show';
+      resultDiv.innerHTML = '<p>🔄 Launching attack...</p>';
+
+      const payload = { tool, user };
+      const headers = { 'Content-Type': 'application/json' };
+
+      // Add headers based on attack type
+      if (attackType === 'wrong-signature') {
+        headers['X-Signature'] = '0000000000000000000000000000000000000000000000000000000000000000';
+        headers['X-Timestamp'] = String(Math.floor(Date.now() / 1000));
+        headers['X-Vendor-ID'] = 'techvendor';
+      } else if (attackType === 'old-timestamp') {
+        headers['X-Signature'] = 'fake_signature_12345';
+        headers['X-Timestamp'] = String(Math.floor(Date.now() / 1000) - 600); // 10 minutes ago
+        headers['X-Vendor-ID'] = 'techvendor';
+      }
+      // no-signature: no additional headers
+
+      try {
+        const response = await fetch('/licenses/borrow', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json().catch(() => ({ detail: 'Unknown error' }));
+
+        if (response.ok) {
+          // This shouldn't happen!
+          resultDiv.className = 'result show allowed';
+          resultDiv.innerHTML = `
+            <h3>⚠️ WARNING: Attack Succeeded!</h3>
+            <p>This should not happen. Security may be disabled.</p>
+            <pre>${JSON.stringify(data, null, 2)}</pre>
+          `;
+        } else {
+          // Expected: attack blocked
+          resultDiv.className = 'result show blocked';
+          let explanation = '';
+
+          if (attackType === 'no-signature') {
+            explanation = 'The server requires X-Signature and X-Timestamp headers. Without a valid HMAC signature, the request is rejected.';
+          } else if (attackType === 'wrong-signature') {
+            explanation = 'The HMAC signature was invalid. The server calculated the expected signature using its shared secret and detected the mismatch.';
+          } else if (attackType === 'old-timestamp') {
+            explanation = 'The timestamp is more than 5 minutes old. The server rejects old requests to prevent replay attacks.';
+          }
+
+          resultDiv.innerHTML = `
+            <h3>✅ Attack Blocked Successfully!</h3>
+            <p><strong>HTTP ${response.status}:</strong> ${data.detail || 'Forbidden'}</p>
+            <p><strong>Why it failed:</strong> ${explanation}</p>
+            <p style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.05); border-radius: 4px;">
+              <strong>🎓 Educational Note:</strong> This demonstrates why cloud-based license management is MORE secure than traditional on-premise solutions. Even if an attacker discovers your API endpoints, they cannot access licenses without the vendor-specific secret embedded in the official client library.
+            </p>
+          `;
+        }
+      } catch (err) {
+        resultDiv.className = 'result show blocked';
+        resultDiv.innerHTML = `
+          <h3>✅ Attack Blocked (Network Error)</h3>
+          <p>The request failed at the network level: ${err.message}</p>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
+

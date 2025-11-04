@@ -298,7 +298,14 @@ def startup_event() -> None:
 
 
 @app.post("/licenses/borrow", response_model=BorrowResponse)
-def borrow(req: BorrowRequest):
+def borrow(req: BorrowRequest, request: Request):
+    # Validate HMAC signature if present
+    from app.security import validate_signature
+    is_valid, error_msg = validate_signature(request, req.tool, req.user, require=False)
+    if not is_valid:
+        logger.warning("Security check failed: %s", error_msg)
+        raise HTTPException(status_code=403, detail=f"Security validation failed: {error_msg}")
+    
     start = time.perf_counter()
     borrow_attempts.labels(req.tool, req.user).inc()
     borrow_id = str(uuid.uuid4())
@@ -597,6 +604,13 @@ def update_budget(req: BudgetConfigRequest):
 @app.get("/config", response_class=HTMLResponse)
 def config_page():
     with open("app/static/config.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
+@app.get("/security-demo", response_class=HTMLResponse)
+def security_demo_page():
+    """Security demonstration page"""
+    with open("app/static/security-demo.html", "r", encoding="utf-8") as f:
         return f.read()
 
 
