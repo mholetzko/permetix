@@ -14,7 +14,7 @@ from fastapi.responses import Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
-from .db import initialize_database, borrow_license, return_license, get_status, update_budget_config, get_all_tools, get_overage_charges
+from .db import initialize_database, borrow_license, return_license, get_status, update_budget_config, get_all_tools, get_overage_charges, get_all_tenants, get_vendor_customers, provision_license_to_tenant
 
 
 app = FastAPI(title="License Server", version="0.1.0")
@@ -256,6 +256,25 @@ class BudgetConfigRequest(BaseModel):
     max_overage: int = Field(..., ge=0)
     commit_price: float = Field(..., ge=0.0)
     overage_price_per_license: float = Field(..., ge=0.0)
+
+
+class AddCustomerRequest(BaseModel):
+    tenant_id: str
+    company_name: str
+    domain: Optional[str] = None
+    crm_id: Optional[str] = None
+
+
+class ProvisionLicenseRequest(BaseModel):
+    tenant_id: str
+    product_id: str
+    product_name: str
+    total: int
+    commit_qty: int
+    max_overage: int
+    commit_price: float = 1000.0
+    overage_price_per_license: float = 100.0
+    crm_opportunity_id: Optional[str] = None
 
 
 @app.on_event("startup")
@@ -606,5 +625,102 @@ def list_overage_charges(tool: Optional[str] = None):
     """Get all overage charges, optionally filtered by tool"""
     charges = get_overage_charges(tool)
     return {"charges": charges}
+
+
+# ============================================================================
+# VENDOR PORTAL ENDPOINTS
+# ============================================================================
+
+@app.get("/vendor", response_class=HTMLResponse)
+def vendor_portal_page():
+    """Vendor portal UI"""
+    with open("app/static/vendor.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
+@app.get("/api/vendor/customers")
+def get_customers():
+    """Get all customers for the vendor (Vector)"""
+    try:
+        # Check if multi-tenant tables exist
+        from .db import get_connection
+        with get_connection(True) as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='tenants'")
+            if not cur.fetchone():
+                # Multi-tenant tables don't exist yet, return demo data
+                return {
+                    "customers": [
+                        {"tenant_id": "demo", "company_name": "Demo Company", "domain": "demo.com", "crm_id": "CRM-DEMO-001", "active_licenses": 6, "status": "active"}
+                    ]
+                }
+        
+        # Multi-tenant tables exist, get real data
+        customers = get_vendor_customers("vector")
+        return {"customers": customers}
+    except Exception as e:
+        logger.error(f"Error getting customers: {e}")
+        # Return demo data if error
+        return {
+            "customers": [
+                {"tenant_id": "demo", "company_name": "Demo Company", "domain": "demo.com", "crm_id": "CRM-DEMO-001", "active_licenses": 6, "status": "active"}
+            ]
+        }
+
+
+@app.post("/api/vendor/customers")
+def add_customer(req: AddCustomerRequest):
+    """Add a new customer tenant"""
+    from datetime import datetime
+    from .db import get_connection
+    
+    try:
+        # Ensure multi-tenant tables exist
+        initialize_database(enable_multitenant=True)
+        
+        with get_connection(False) as conn:
+            cur = conn.cursor()
+            now = datetime.utcnow().isoformat()
+            
+            cur.execute(
+                "INSERT INTO tenants(tenant_id, company_name, domain, crm_id, status, created_at) VALUES (?, ?, ?, ?, 'active', ?)",
+                (req.tenant_id, req.company_name, req.domain, req.crm_id, now)
+            )
+            conn.commit()
+        
+        logger.info(f"Added customer: {req.company_name} ({req.tenant_id})")
+        return {"status": "ok", "tenant_id": req.tenant_id}
+    except Exception as e:
+        logger.error(f"Error adding customer: {e}")
+        raise HTTPException(500, f"Failed to add customer: {str(e)}")
+
+
+@app.post("/api/vendor/provision")
+def provision_license(req: ProvisionLicenseRequest):
+    """Provision a new license to a customer"""
+    try:
+        # Ensure multi-tenant tables exist
+        initialize_database(enable_multitenant=True)
+        
+        package_id = provision_license_to_tenant(
+            vendor_id="vector",
+            tenant_id=req.tenant_id,
+            product_config={
+                "product_id": req.product_id,
+                "product_name": req.product_name,
+                "total": req.total,
+                "commit_qty": req.commit_qty,
+                "max_overage": req.max_overage,
+                "commit_price": req.commit_price,
+                "overage_price_per_license": req.overage_price_per_license,
+                "crm_opportunity_id": req.crm_opportunity_id
+            }
+        )
+        
+        logger.info(f"Provisioned license package {package_id} to tenant {req.tenant_id}")
+        return {"status": "provisioned", "package_id": package_id}
+    except Exception as e:
+        logger.error(f"Error provisioning license: {e}")
+        raise HTTPException(500, f"Failed to provision license: {str(e)}")
 
 

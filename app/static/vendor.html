@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vector Vendor Portal • Cloud License Server</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <style>
+      .vendor-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+      .vendor-header {
+        background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+        color: white;
+        padding: 60px 40px;
+        border-radius: 8px;
+        margin-bottom: 40px;
+      }
+      .vendor-header h1 {
+        font-size: 42px;
+        font-weight: 200;
+        margin: 0 0 12px 0;
+        letter-spacing: -1px;
+      }
+      .vendor-header p {
+        font-size: 16px;
+        color: #999;
+        margin: 0;
+      }
+      .vendor-card {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      .vendor-card h2 {
+        font-size: 24px;
+        font-weight: 400;
+        margin: 0 0 24px 0;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #e0e0e0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th, td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      th {
+        background: #fafafa;
+        font-weight: 600;
+        color: #666;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      td {
+        font-size: 14px;
+        color: #333;
+      }
+      .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .badge-success {
+        background: #e6f4ea;
+        color: #1e8e3e;
+      }
+      .badge-blue {
+        background: #e3f2fd;
+        color: #1565c0;
+      }
+      .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        background: #000;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.3s;
+      }
+      .btn:hover {
+        background: #333;
+      }
+      .btn-secondary {
+        background: #666;
+      }
+      .btn-secondary:hover {
+        background: #888;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal.show {
+        display: flex;
+      }
+      .modal-content {
+        background: white;
+        border-radius: 8px;
+        padding: 40px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .modal-content h2 {
+        margin: 0 0 24px 0;
+        font-size: 24px;
+        font-weight: 400;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+      }
+      .form-group input, .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: inherit;
+      }
+      .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: var(--mb-blue);
+      }
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+      }
+      .empty-state svg {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 16px;
+        opacity: 0.3;
+      }
+      .info-box {
+        background: #e3f2fd;
+        border-left: 4px solid #1565c0;
+        padding: 16px;
+        margin-bottom: 24px;
+        border-radius: 4px;
+      }
+      .info-box p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="mb-header">
+      <div class="mb-brand">Cloud License Server</div>
+      <nav class="mb-nav">
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/multitenant">Multi-Tenant Demo</a>
+      </nav>
+    </header>
+
+    <div class="vendor-container">
+      <div class="vendor-header">
+        <h1>🏢 Vector Informatik GmbH</h1>
+        <p>Vendor Portal • Manage Customers & License Provisioning</p>
+      </div>
+
+      <div class="info-box">
+        <p>
+          <strong>🎯 Demo Mode:</strong> This vendor portal demonstrates how software vendors (like Vector) 
+          can manage their customers and provision licenses. In production, each customer would have their 
+          own server instance (e.g., <code>bmw.cloudlicenses.com</code>).
+        </p>
+      </div>
+
+      <div class="vendor-card">
+        <h2>📊 My Customers</h2>
+        <table id="customers-table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Tenant ID</th>
+              <th>CRM ID</th>
+              <th>Active Licenses</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 40px; color: #999;">
+                Loading customers...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="vendor-card">
+        <h2>🚀 Quick Actions</h2>
+        <button class="btn" onclick="showProvisionModal()">
+          + Provision New License to Customer
+        </button>
+        <button class="btn btn-secondary" onclick="showAddCustomerModal()" style="margin-left: 12px;">
+          + Add New Customer
+        </button>
+      </div>
+
+      <div class="vendor-card">
+        <h2>📦 Available Products</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Product ID</th>
+              <th>Default Config</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>DaVinci Configurator SE</strong></td>
+              <td><code>davinci-se</code></td>
+              <td>20 total (5 commit, 15 overage) • €5000 commit + €500 per overage</td>
+            </tr>
+            <tr>
+              <td><strong>DaVinci Configurator IDE</strong></td>
+              <td><code>davinci-ide</code></td>
+              <td>10 total (10 commit, 0 overage) • €3000 commit</td>
+            </tr>
+            <tr>
+              <td><strong>Greenhills Multi 8.2</strong></td>
+              <td><code>greenhills-multi</code></td>
+              <td>20 total (5 commit, 15 overage) • €8000 commit + €800 per overage</td>
+            </tr>
+            <tr>
+              <td><strong>Vector ASAP2 v20</strong></td>
+              <td><code>asap2-v20</code></td>
+              <td>20 total (5 commit, 15 overage) • €4000 commit + €400 per overage</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add Customer Modal -->
+    <div id="add-customer-modal" class="modal">
+      <div class="modal-content">
+        <h2>Add New Customer</h2>
+        <form id="add-customer-form">
+          <div class="form-group">
+            <label>Company Name *</label>
+            <input type="text" id="company-name" placeholder="e.g., BMW AG" required>
+          </div>
+          <div class="form-group">
+            <label>Tenant ID * (lowercase, no spaces)</label>
+            <input type="text" id="tenant-id" placeholder="e.g., bmw" pattern="[a-z0-9-]+" required>
+          </div>
+          <div class="form-group">
+            <label>Domain</label>
+            <input type="text" id="domain" placeholder="e.g., bmw.com">
+          </div>
+          <div class="form-group">
+            <label>CRM Account ID</label>
+            <input type="text" id="crm-id" placeholder="e.g., CRM-BMW-001">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn">Add Customer</button>
+            <button type="button" class="btn btn-secondary" onclick="hideAddCustomerModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Provision License Modal -->
+    <div id="provision-modal" class="modal">
+      <div class="modal-content">
+        <h2>Provision License to Customer</h2>
+        <form id="provision-form">
+          <div class="form-group">
+            <label>Customer *</label>
+            <select id="tenant-select" required>
+              <option value="">Select customer...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Product *</label>
+            <select id="product-select" required>
+              <option value="">Select product...</option>
+              <option value="davinci-se|DaVinci Configurator SE|5000|500">DaVinci Configurator SE</option>
+              <option value="davinci-ide|DaVinci Configurator IDE|3000|0">DaVinci Configurator IDE</option>
+              <option value="greenhills-multi|Greenhills Multi 8.2|8000|800">Greenhills Multi 8.2</option>
+              <option value="asap2-v20|Vector ASAP2 v20|4000|400">Vector ASAP2 v20</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Total Licenses *</label>
+            <input type="number" id="total-licenses" value="20" min="1" required>
+          </div>
+          <div class="form-group">
+            <label>Commit Quantity *</label>
+            <input type="number" id="commit-qty" value="5" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Max Overage *</label>
+            <input type="number" id="max-overage" value="15" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>CRM Opportunity ID</label>
+            <input type="text" id="crm-opportunity" placeholder="e.g., OPP-2025-001">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn">Provision License</button>
+            <button type="button" class="btn btn-secondary" onclick="hideProvisionModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div>© 2025 Matthias Holetzko</div>
+      <div>
+        <a href="/">Home</a> • 
+        <a href="/multitenant">Multi-Tenant Demo</a> • 
+        <a href="https://github.com/mholetzko/cloud-vs-automotive-demo" target="_blank">GitHub</a>
+      </div>
+    </footer>
+
+    <script>
+      // Load customers
+      async function loadCustomers() {
+        try {
+          const response = await fetch('/api/vendor/customers');
+          const data = await response.json();
+          
+          const tbody = document.querySelector('#customers-table tbody');
+          if (data.customers.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="5" class="empty-state">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <p>No customers yet. Add your first customer to get started!</p>
+                </td>
+              </tr>
+            `;
+            return;
+          }
+          
+          tbody.innerHTML = data.customers.map(c => `
+            <tr>
+              <td><strong>${c.company_name}</strong></td>
+              <td><code>${c.tenant_id}</code></td>
+              <td><code>${c.crm_id || 'N/A'}</code></td>
+              <td><span class="badge badge-success">${c.active_licenses} active</span></td>
+              <td><span class="badge badge-blue">${c.status || 'active'}</span></td>
+            </tr>
+          `).join('');
+          
+          // Populate tenant select
+          const select = document.getElementById('tenant-select');
+          select.innerHTML = '<option value="">Select customer...</option>' +
+            data.customers.map(c => `<option value="${c.tenant_id}">${c.company_name} (${c.tenant_id})</option>`).join('');
+        } catch (err) {
+          console.error('Error loading customers:', err);
+          const tbody = document.querySelector('#customers-table tbody');
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #e53935;">Error loading customers</td></tr>';
+        }
+      }
+
+      // Add customer
+      document.getElementById('add-customer-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const companyName = document.getElementById('company-name').value;
+        const tenantId = document.getElementById('tenant-id').value;
+        const domain = document.getElementById('domain').value;
+        const crmId = document.getElementById('crm-id').value;
+        
+        try {
+          const response = await fetch('/api/vendor/customers', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              tenant_id: tenantId,
+              company_name: companyName,
+              domain: domain || null,
+              crm_id: crmId || null
+            })
+          });
+          
+          if (response.ok) {
+            alert('✅ Customer added successfully!');
+            hideAddCustomerModal();
+            document.getElementById('add-customer-form').reset();
+            loadCustomers();
+          } else {
+            const error = await response.json();
+            alert('❌ Error: ' + error.detail);
+          }
+        } catch (err) {
+          alert('❌ Error adding customer');
+          console.error(err);
+        }
+      });
+
+      // Provision license
+      document.getElementById('provision-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const tenantId = document.getElementById('tenant-select').value;
+        const productValue = document.getElementById('product-select').value;
+        const [productId, productName, commitPrice, overagePrice] = productValue.split('|');
+        const total = parseInt(document.getElementById('total-licenses').value);
+        const commitQty = parseInt(document.getElementById('commit-qty').value);
+        const maxOverage = parseInt(document.getElementById('max-overage').value);
+        const crmOpportunity = document.getElementById('crm-opportunity').value;
+        
+        try {
+          const response = await fetch('/api/vendor/provision', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              tenant_id: tenantId,
+              product_id: productId,
+              product_name: productName,
+              total: total,
+              commit_qty: commitQty,
+              max_overage: maxOverage,
+              commit_price: parseFloat(commitPrice),
+              overage_price_per_license: parseFloat(overagePrice),
+              crm_opportunity_id: crmOpportunity || null
+            })
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            alert(`✅ License provisioned successfully!\n\nPackage ID: ${result.package_id}\nCustomer can now use this license.`);
+            hideProvisionModal();
+            document.getElementById('provision-form').reset();
+            loadCustomers();
+          } else {
+            const error = await response.json();
+            alert('❌ Error: ' + error.detail);
+          }
+        } catch (err) {
+          alert('❌ Error provisioning license');
+          console.error(err);
+        }
+      });
+
+      // Modal functions
+      function showAddCustomerModal() {
+        document.getElementById('add-customer-modal').classList.add('show');
+      }
+      
+      function hideAddCustomerModal() {
+        document.getElementById('add-customer-modal').classList.remove('show');
+      }
+      
+      function showProvisionModal() {
+        document.getElementById('provision-modal').classList.add('show');
+      }
+      
+      function hideProvisionModal() {
+        document.getElementById('provision-modal').classList.remove('show');
+      }
+
+      // Close modal on background click
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.remove('show');
+          }
+        });
+      });
+
+      // Load on page load
+      loadCustomers();
+    </script>
+  </body>
+</html>
+
