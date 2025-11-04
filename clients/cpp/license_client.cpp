@@ -55,7 +55,8 @@ public:
         if (curl) {
             curl_easy_cleanup(curl);
         }
-        curl_global_cleanup();
+        // Note: avoid curl_global_cleanup to prevent segfaults due to
+        // static destructor ordering in some environments
     }
     
     // Generate HMAC-SHA256 signature

@@ -64,7 +64,7 @@ void license_client_cleanup(void) {
         curl_easy_cleanup(g_curl);
         g_curl = NULL;
     }
-    curl_global_cleanup();
+    // Avoid curl_global_cleanup to prevent segfault due to destructor ordering
 }
 
 int license_borrow(const char *tool, const char *user, license_handle_t *handle) {
