@@ -1,0 +1,11 @@
+# Rust
+clients/rust/target/
+clients/rust/target/**
+
+# Python
+**/__pycache__/
+.venv/
+venv/
+
+# OS
+.DS_Store
