@@ -505,9 +505,14 @@ function updateDashboard(data) {
   
   // Update charts based on selected view
   if (selectedTool === 'all') {
-    // Update overview charts
-    updateBorrowRateChart(data.rates.borrow_per_min);
-    updateOverageChart(data.recent_events.borrows);
+    // Update overview charts from server-buffered history (for correct windowed history)
+    if (toolMetricsCache) {
+      rebuildOverviewFromBuffer(toolMetricsCache);
+    } else {
+      // Fallback to live tick if buffer not yet available
+      updateBorrowRateChart(data.rates.borrow_per_min);
+      updateOverageChart(data.recent_events.borrows);
+    }
     updateUtilizationChart(data.tools);
   } else {
     // Update tool-specific charts with server-buffered data
@@ -515,6 +520,41 @@ function updateDashboard(data) {
       updateToolSpecificCharts(selectedTool, toolMetricsCache);
     }
   }
+}
+
+// Build overview charts from buffered per-tool metrics
+function rebuildOverviewFromBuffer(toolMetrics) {
+  // Aggregate per-minute across all tools within current WINDOW_SIZE
+  const cutoffMs = Date.now() - WINDOW_SIZE * 1000;
+  const bucketMap = new Map(); // ts (ISO) -> {count, overage}
+  
+  Object.keys(toolMetrics).forEach(tool => {
+    const series = toolMetrics[tool] || [];
+    series.forEach(point => {
+      const tsMs = new Date(point.timestamp).getTime();
+      if (tsMs < cutoffMs) return;
+      const key = point.timestamp; // already minute-rounded server-side
+      const prev = bucketMap.get(key) || { count: 0, overage: 0 };
+      prev.count += (point.count || 0);
+      prev.overage += (point.overage_count || 0);
+      bucketMap.set(key, prev);
+    });
+  });
+  
+  // Sort by timestamp
+  const entries = Array.from(bucketMap.entries()).sort((a, b) => new Date(a[0]) - new Date(b[0]));
+  const labels = entries.map(([ts]) => new Date(ts).toLocaleTimeString());
+  const borrowCounts = entries.map(([, v]) => v.count);
+  const overageCounts = entries.map(([, v]) => v.overage);
+  
+  // Replace entire datasets for accurate history
+  borrowRateChart.data.labels = labels;
+  borrowRateChart.data.datasets[0].data = borrowCounts;
+  borrowRateChart.update('none');
+  
+  overageChart.data.labels = labels;
+  overageChart.data.datasets[0].data = overageCounts;
+  overageChart.update('none');
 }
 
 function updateMetricCards(rates, tools, bufferStats) {
