@@ -389,6 +389,16 @@
             <input type="number" id="budget-overage" min="0" required>
             <small>Additional licenses (higher cost)</small>
           </div>
+          <div class="form-group">
+            <label>Commit Price ($)</label>
+            <input type="number" id="budget-commit-price" min="0" step="0.01">
+            <small>Fixed fee per billing period</small>
+          </div>
+          <div class="form-group">
+            <label>Overage Price ($)</label>
+            <input type="number" id="budget-overage-price" min="0" step="0.01">
+            <small>Per overage license usage</small>
+          </div>
           <div style="background: #f9f9f9; padding: 15px; border-radius: 4px; margin: 20px 0;">
             <p style="margin: 0 0 10px 0;"><strong>Current Status:</strong></p>
             <p style="margin: 5px 0; font-size: 0.9rem;" id="budget-status-vendor"><strong>Vendor Limits:</strong> <span id="vendor-limits">-</span></p>
@@ -601,6 +611,8 @@
             document.getElementById('budget-total').value = config.vendor_total || config.active_total;
             document.getElementById('budget-commit').value = config.vendor_commit_qty || config.active_commit_qty;
             document.getElementById('budget-overage').value = config.vendor_max_overage || config.active_max_overage;
+            document.getElementById('budget-commit-price').value = (config.commit_price ?? 0);
+            document.getElementById('budget-overage-price').value = (config.overage_price_per_license ?? 0);
             
             // Show status
             const vendorLimits = config.vendor_total 
@@ -629,6 +641,8 @@
         const total = parseInt(document.getElementById('budget-total').value);
         const commit = parseInt(document.getElementById('budget-commit').value);
         const overage = parseInt(document.getElementById('budget-overage').value);
+        const commitPrice = parseFloat(document.getElementById('budget-commit-price').value || '0');
+        const overagePrice = parseFloat(document.getElementById('budget-overage-price').value || '0');
         
         if (!tool || isNaN(total) || isNaN(commit) || isNaN(overage)) {
           alert('Please fill in all fields');
@@ -649,8 +663,8 @@
               total,
               commit,
               max_overage: overage,
-              commit_price: 0,
-              overage_price_per_license: 0
+              commit_price: commitPrice,
+              overage_price_per_license: overagePrice
             })
           });
           

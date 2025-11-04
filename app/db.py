@@ -942,7 +942,8 @@ def get_budget_config(tool: str) -> Optional[dict]:
             """
             SELECT tool, total, commit_qty, max_overage, borrowed,
                    vendor_total, vendor_commit_qty, vendor_max_overage,
-                   customer_total, customer_commit_qty, customer_max_overage
+                   customer_total, customer_commit_qty, customer_max_overage,
+                   commit_price, overage_price_per_license
             FROM licenses
             WHERE tool = ?
             """,
@@ -964,5 +965,7 @@ def get_budget_config(tool: str) -> Optional[dict]:
             "active_total": row["total"],
             "active_commit_qty": row["commit_qty"],
             "active_max_overage": row["max_overage"],
-            "borrowed": row["borrowed"]
+            "borrowed": row["borrowed"],
+            "commit_price": row["commit_price"],
+            "overage_price_per_license": row["overage_price_per_license"]
         }
