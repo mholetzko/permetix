@@ -210,6 +210,7 @@
 
       <div class="vendor-card">
         <h2>📊 My Customers</h2>
+        <p style="margin-bottom: 15px; color: #666;">Click on a customer to manage their license budgets</p>
         <table id="customers-table">
           <thead>
             <tr>
@@ -218,11 +219,12 @@
               <th>CRM ID</th>
               <th>Active Licenses</th>
               <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td colspan="5" style="text-align: center; padding: 40px; color: #999;">
+              <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
                 Loading customers...
               </td>
             </tr>
@@ -280,47 +282,6 @@
         </table>
       </div>
 
-      <div class="vendor-card">
-        <h2>⚙️ Customer Budget Management</h2>
-        <p style="margin-bottom: 20px; color: #666;">
-          Configure budget limits for deployed licenses. Customers can only restrict (lower) these limits on their side.
-        </p>
-        <div style="margin-bottom: 15px;">
-          <label style="font-weight: 600; display: block; margin-bottom: 5px;">Select Tool:</label>
-          <select id="budget-tool-select" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
-            <option value="">-- Select a tool --</option>
-            <option value="ECU Development Suite">ECU Development Suite</option>
-            <option value="GreenHills Multi IDE">GreenHills Multi IDE</option>
-            <option value="AUTOSAR Configuration Tool">AUTOSAR Configuration Tool</option>
-            <option value="CAN Bus Analyzer Pro">CAN Bus Analyzer Pro</option>
-            <option value="Model-Based Design Studio">Model-Based Design Studio</option>
-          </select>
-        </div>
-        <div id="budget-config-form" style="display: none;">
-          <div class="form-group">
-            <label>Total Licenses</label>
-            <input type="number" id="budget-total" min="1" required>
-            <small>Maximum licenses customer can use</small>
-          </div>
-          <div class="form-group">
-            <label>Commit Quantity</label>
-            <input type="number" id="budget-commit" min="0" required>
-            <small>Fixed allocation (always available)</small>
-          </div>
-          <div class="form-group">
-            <label>Max Overage</label>
-            <input type="number" id="budget-overage" min="0" required>
-            <small>Additional licenses (higher cost)</small>
-          </div>
-          <div style="background: #f9f9f9; padding: 15px; border-radius: 4px; margin: 20px 0;">
-            <p style="margin: 0 0 10px 0;"><strong>Current Status:</strong></p>
-            <p style="margin: 5px 0; font-size: 0.9rem;" id="budget-status-vendor"><strong>Vendor Limits:</strong> <span id="vendor-limits">-</span></p>
-            <p style="margin: 5px 0; font-size: 0.9rem;" id="budget-status-customer"><strong>Customer Restrictions:</strong> <span id="customer-limits">None set</span></p>
-            <p style="margin: 5px 0; font-size: 0.9rem;" id="budget-status-active"><strong>Active Config:</strong> <span id="active-limits">-</span></p>
-          </div>
-          <button type="button" class="btn" onclick="saveVendorBudget()">💾 Set Vendor Budget</button>
-        </div>
-      </div>
     </div>
 
     <!-- Add Customer Modal -->
