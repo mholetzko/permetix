@@ -193,7 +193,9 @@
       </div>
 
       <div class="tiles-section">
-        <div class="tiles">
+        <h2 style="font-weight:300; font-size:28px; margin:0 0 16px 0;">Customer View</h2>
+        <p style="color:#666; margin:0 0 24px 0;">Everything your engineering teams need to operate.</p>
+        <div class="tiles" style="margin-bottom:48px;">
           <a href="/dashboard" class="tile">
             <div class="tile-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -205,7 +207,7 @@
             <h2>Dashboard</h2>
             <p>Manage licenses, view status, track borrows and returns</p>
           </a>
-
+          
           <a href="/realtime" class="tile">
             <div class="tile-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -216,7 +218,7 @@
             <h2>Real-Time Metrics</h2>
             <p>Zero-lag live dashboard with Server-Sent Events (6h retention)</p>
           </a>
-
+          
           <a href="https://mholetzko.grafana.net/d/license-business-metrics/license-business-metrics?orgId=1&var-DS_PROMETHEUS=grafanacloud-prom&refresh=5s" target="_blank" class="tile">
             <div class="tile-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -226,7 +228,7 @@
             <h2>Observability</h2>
             <p>Live metrics, dashboards, and analytics in Grafana Cloud</p>
           </a>
-
+          
           <a href="https://github.com/mholetzko/cloud-vs-automotive-demo/tree/main/clients" target="_blank" class="tile">
             <div class="tile-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -237,7 +239,7 @@
             <h2>Client Libraries</h2>
             <p>Python, C, C++, and Rust client implementations</p>
           </a>
-
+          
           <a href="/config" class="tile">
             <div class="tile-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -245,23 +247,14 @@
                 <path d="M12 1v6m0 6v6m10-11h-6m-6 0H4m15.364 10.364l-4.243-4.243M8.879 8.879l-4.243-4.243m14.728 0l-4.243 4.243m-6.364 6.364l-4.243 4.243"/>
               </svg>
             </div>
-            <h2>Budget Config</h2>
-            <p>Configure license pools, commit levels, and pricing</p>
+            <h2>Protection</h2>
+            <p>Set max spend protection and manage API keys</p>
           </a>
-
-          <a href="/multitenant" class="tile">
-            <div class="tile-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="3" y="3" width="7" height="7" rx="1"/>
-                <rect x="14" y="3" width="7" height="7" rx="1"/>
-                <rect x="3" y="14" width="7" height="7" rx="1"/>
-                <rect x="14" y="14" width="7" height="7" rx="1"/>
-              </svg>
-            </div>
-            <h2>Multi-Tenant Demo</h2>
-            <p>Architecture overview and documentation</p>
-          </a>
-
+        </div>
+        
+        <h2 style="font-weight:300; font-size:28px; margin:32px 0 16px 0;">Vendor View</h2>
+        <p style="color:#666; margin:0 0 24px 0;">Provision licenses and manage customers.</p>
+        <div class="tiles" style="margin-bottom:48px;">
           <a href="/vendor" class="tile">
             <div class="tile-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -274,7 +267,23 @@
             <h2>Vendor Portal</h2>
             <p>Manage customers and provision licenses</p>
           </a>
+          <a href="/multitenant" class="tile">
+            <div class="tile-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
+              </svg>
+            </div>
+            <h2>Multi-Tenant Demo</h2>
+            <p>Architecture overview and documentation</p>
+          </a>
+        </div>
 
+        <h2 style="font-weight:300; font-size:28px; margin:32px 0 16px 0;">Demos</h2>
+        <p style="color:#666; margin:0 0 24px 0;">Hands-on demonstrations for live sessions.</p>
+        <div class="tiles">
           <a href="/security-demo" class="tile">
             <div class="tile-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -284,6 +293,16 @@
             </div>
             <h2>Security Demo</h2>
             <p>Interactive demonstration of multi-layer protection</p>
+          </a>
+          <a href="/presentation" class="tile">
+            <div class="tile-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="12" rx="2"/>
+                <line x1="12" y1="15" x2="12" y2="21"/>
+              </svg>
+            </div>
+            <h2>Interactive Presentation</h2>
+            <p>Overview journey and narrative</p>
           </a>
         </div>
       </div>
