@@ -21,8 +21,14 @@ async fn main() -> Result<()> {
     println!("User:   {}", user);
     println!("===========================================\n");
     
+    // Read API key from env if provided
+    let api_key = std::env::var("LICENSE_API_KEY").ok();
+
     // Create client
-    let client = LicenseClient::new(server_url);
+    let client = match api_key {
+        Some(k) => LicenseClient::with_security_and_key(server_url.clone(), true, Some(k)),
+        None => LicenseClient::new(server_url.clone()),
+    };
     println!("✅ Client initialized\n");
     
     // Get status before borrowing

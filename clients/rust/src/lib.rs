@@ -158,6 +158,7 @@ pub struct LicenseClient {
     client: Arc<reqwest::Client>,
     base_url: String,
     enable_security: bool,
+    api_key: Option<String>,
 }
 
 // Vendor secret - embedded in the client library binary
@@ -172,7 +173,7 @@ impl LicenseClient {
     ///
     /// * `base_url` - Base URL of the license server (e.g., "http://localhost:8000")
     pub fn new(base_url: impl Into<String>) -> Self {
-        Self::with_security(base_url, true)
+        Self::with_security_and_key(base_url, true, std::env::var("LICENSE_API_KEY").ok())
     }
     
     /// Create a new license client with configurable security
@@ -182,18 +183,27 @@ impl LicenseClient {
     /// * `base_url` - Base URL of the license server
     /// * `enable_security` - Whether to enable HMAC signature authentication
     pub fn with_security(base_url: impl Into<String>, enable_security: bool) -> Self {
+        Self::with_security_and_key(base_url, enable_security, std::env::var("LICENSE_API_KEY").ok())
+    }
+
+    /// Create a new license client with configurable security and API key
+    pub fn with_security_and_key(base_url: impl Into<String>, enable_security: bool, api_key: Option<String>) -> Self {
         Self {
             client: Arc::new(reqwest::Client::new()),
             base_url: base_url.into(),
             enable_security,
+            api_key,
         }
     }
     
     /// Generate HMAC signature for request authentication
     fn generate_signature(&self, tool: &str, user: &str, timestamp: &str) -> String {
         type HmacSha256 = Hmac<Sha256>;
-        
-        let payload = format!("{}|{}|{}", tool, user, timestamp);
+        // Include API key in payload when present to match server-side validation
+        let payload = match &self.api_key {
+            Some(k) => format!("{}|{}|{}|{}", tool, user, timestamp, k),
+            None => format!("{}|{}|{}", tool, user, timestamp),
+        };
         let mut mac = HmacSha256::new_from_slice(VENDOR_SECRET.as_bytes())
             .expect("HMAC can take key of any size");
         mac.update(payload.as_bytes());
@@ -259,6 +269,11 @@ impl LicenseClient {
                 .header("X-Signature", signature)
                 .header("X-Timestamp", timestamp)
                 .header("X-Vendor-ID", VENDOR_ID);
+
+            // Send API key if available
+            if let Some(k) = &self.api_key {
+                request = request.header("Authorization", format!("Bearer {}", k));
+            }
         }
         
         let response = request.send().await?;
