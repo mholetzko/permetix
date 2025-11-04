@@ -240,6 +240,7 @@ let allTools = []; // List of all available tools
 // Server-side tool metrics are now buffered on the backend
 // We just need to track which tool is selected
 let toolMetricsCache = null; // Will store the latest tool_metrics from SSE
+let prevToolNames = [];
 
 // Time range selector
 const timeRangeSelector = document.getElementById('time-range');
@@ -313,24 +314,21 @@ toolFilterSelector.addEventListener('change', (e) => {
 });
 
 function updateToolSelector(tools) {
-  // Update tool list
+  const names = tools.map(t => t.tool).sort();
+  if (JSON.stringify(names) === JSON.stringify(prevToolNames)) {
+    return; // No change; avoid resetting the dropdown while user interacts
+  }
+  prevToolNames = names;
   allTools = tools;
-  
-  // Get current selection
   const currentSelection = toolFilterSelector.value;
-  
-  // Clear and rebuild options
   toolFilterSelector.innerHTML = '<option value="all">All Tools (Overview)</option>';
-  
   tools.forEach(tool => {
     const option = document.createElement('option');
     option.value = tool.tool;
     option.textContent = tool.tool;
     toolFilterSelector.appendChild(option);
   });
-  
-  // Restore selection if it still exists
-  if (currentSelection !== 'all') {
+  if (currentSelection && currentSelection !== 'all') {
     const stillExists = tools.some(t => t.tool === currentSelection);
     if (stillExists) {
       toolFilterSelector.value = currentSelection;

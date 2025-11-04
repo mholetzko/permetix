@@ -302,10 +302,10 @@ async fn main() {
     );
 
     // Check server status
-    print!("{}", "🔍 Checking server status... ".cyan());
+    print!("{}", "Checking server status... ".cyan());
     match get_status(&client, &args.url).await {
         Ok(statuses) => {
-            println!("{}", "✓".green().bold());
+            println!("{}", "OK".green().bold());
             for status in statuses {
                 println!(
                     "   {} → {} total, {} borrowed, {} available",
@@ -317,14 +317,14 @@ async fn main() {
             }
         }
         Err(e) => {
-            println!("{}", "✗".red().bold());
+            println!("{}", "FAIL".red().bold());
             eprintln!("{} {}", "Error:".red().bold(), e);
             std::process::exit(1);
         }
     }
     println!();
 
-    println!("{}", "🚀 Starting stress test...".cyan().bold());
+    println!("{}", "Starting stress test...".cyan().bold());
     println!();
 
     let multi_progress = MultiProgress::new();
@@ -447,9 +447,9 @@ async fn main() {
     println!();
 
     if all_stats.failed_borrows == 0 && all_stats.failed_returns == 0 {
-        println!("{}", "🎉 All operations completed successfully!".green().bold());
+        println!("{}", "All operations completed successfully.".green().bold());
     } else {
-        println!("{}", "⚠️  Some operations failed - check server logs".yellow().bold());
+        println!("{}", "Some operations failed - check server logs".yellow().bold());
     }
 }
 
