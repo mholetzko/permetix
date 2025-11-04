@@ -590,6 +590,12 @@ def dashboard_page():
         return f.read()
 
 
+@app.get("/welcome", response_class=HTMLResponse)
+def welcome_page():
+    with open("app/static/welcome.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
 @app.get("/realtime", response_class=HTMLResponse)
 def realtime_page():
     with open("app/static/realtime.html", "r", encoding="utf-8") as f:

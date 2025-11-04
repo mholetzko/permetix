@@ -1,0 +1,23 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Permetrix Icon: Shield + P monogram -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B0F14"/>
+      <stop offset="1" stop-color="#1B2735"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="256" height="256" rx="28" fill="url(#g)"/>
+
+  <!-- Shield -->
+  <path d="M128 34c28 16 56 16 84 0v86c0 25-15 49-39 64l-45 28-45-28c-24-15-39-39-39-64V34c28 16 56 16 84 0z" fill="#0F1720" stroke="#7CC4FF" stroke-width="2"/>
+
+  <!-- P monogram (horizontally centered tweak) -->
+  <g transform="translate(6,0)">
+    <path d="M92 92h44c18 0 32 14 32 32s-14 32-32 32h-24v28h-20V92zm40 44c7.7 0 14-6.3 14-14s-6.3-14-14-14h-20v28h20z" fill="#E6F2FF"/>
+  </g>
+
+  <!-- Subtle highlight ring -->
+  <circle cx="128" cy="128" r="104" stroke="rgba(124,196,255,0.25)" stroke-width="2"/>
+</svg>
+
