@@ -36,6 +36,7 @@ public:
     std::string base_url;
     CURL* curl;
     bool enable_security;
+    std::string api_key;
     
     Impl(const std::string& url, bool security = true) 
         : base_url(url), enable_security(security) {
@@ -43,6 +44,10 @@ public:
         curl = curl_easy_init();
         if (!curl) {
             throw LicenseException("Failed to initialize CURL");
+        }
+        const char* env_key = std::getenv("LICENSE_API_KEY");
+        if (env_key) {
+            api_key = env_key;
         }
     }
     
@@ -57,7 +62,12 @@ public:
     std::string generate_signature(const std::string& tool, 
                                    const std::string& user, 
                                    const std::string& timestamp) {
-        std::string payload = tool + "|" + user + "|" + timestamp;
+        std::string payload;
+        if (!api_key.empty()) {
+            payload = tool + "|" + user + "|" + timestamp + "|" + api_key;
+        } else {
+            payload = tool + "|" + user + "|" + timestamp;
+        }
         
         unsigned char* digest = HMAC(EVP_sha256(),
                                      VENDOR_SECRET.c_str(), VENDOR_SECRET.length(),
@@ -106,6 +116,10 @@ public:
             headers = curl_slist_append(headers, sig_header.c_str());
             headers = curl_slist_append(headers, ts_header.c_str());
             headers = curl_slist_append(headers, vendor_header.c_str());
+            if (!api_key.empty()) {
+                std::string auth_header = "Authorization: Bearer " + api_key;
+                headers = curl_slist_append(headers, auth_header.c_str());
+            }
         }
         
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -245,7 +259,11 @@ void LicenseClient::return_license(const LicenseHandle& handle) {
 }
 
 LicenseStatus LicenseClient::get_status(const std::string& tool) {
-    auto response = pimpl_->http_get("/licenses/" + tool + "/status");
+    // URL-encode tool using curl
+    char* escaped = curl_easy_escape(pimpl_->curl, tool.c_str(), static_cast<int>(tool.size()));
+    std::string encoded_tool = escaped ? std::string(escaped) : tool;
+    if (escaped) curl_free(escaped);
+    auto response = pimpl_->http_get("/licenses/" + encoded_tool + "/status");
     
     if (response.http_code != 200) {
         throw LicenseException("HTTP error: " + std::to_string(response.http_code));

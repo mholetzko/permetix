@@ -12,6 +12,7 @@
 static char g_base_url[256] = {0};
 static char g_error_msg[512] = {0};
 static CURL *g_curl = NULL;
+static char g_api_key[256] = {0};
 
 typedef struct {
     char *data;
@@ -42,6 +43,10 @@ int license_client_init(const char *base_url) {
     }
     
     strncpy(g_base_url, base_url, sizeof(g_base_url) - 1);
+    const char *env_key = getenv("LICENSE_API_KEY");
+    if (env_key) {
+        strncpy(g_api_key, env_key, sizeof(g_api_key) - 1);
+    }
     
     curl_global_init(CURL_GLOBAL_DEFAULT);
     g_curl = curl_easy_init();
@@ -84,6 +89,11 @@ int license_borrow(const char *tool, const char *user, license_handle_t *handle)
     
     struct curl_slist *headers = NULL;
     headers = curl_slist_append(headers, "Content-Type: application/json");
+    if (g_api_key[0] != '\0') {
+        char auth_header[320];
+        snprintf(auth_header, sizeof(auth_header), "Authorization: Bearer %s", g_api_key);
+        headers = curl_slist_append(headers, auth_header);
+    }
     curl_easy_setopt(g_curl, CURLOPT_HTTPHEADER, headers);
     
     CURLcode res = curl_easy_perform(g_curl);
@@ -160,6 +170,11 @@ int license_return(const license_handle_t *handle) {
     
     struct curl_slist *headers = NULL;
     headers = curl_slist_append(headers, "Content-Type: application/json");
+    if (g_api_key[0] != '\0') {
+        char auth_header[320];
+        snprintf(auth_header, sizeof(auth_header), "Authorization: Bearer %s", g_api_key);
+        headers = curl_slist_append(headers, auth_header);
+    }
     curl_easy_setopt(g_curl, CURLOPT_HTTPHEADER, headers);
     
     CURLcode res = curl_easy_perform(g_curl);
@@ -191,8 +206,11 @@ int license_get_status(const char *tool, license_status_t *status) {
         return -1;
     }
     
-    char url[512];
-    snprintf(url, sizeof(url), "%s/licenses/%s/status", g_base_url, tool);
+    char url[1024];
+    // URL-encode tool using curl
+    char *escaped = curl_easy_escape(g_curl, tool, (int)strlen(tool));
+    snprintf(url, sizeof(url), "%s/licenses/%s/status", g_base_url, escaped ? escaped : tool);
+    if (escaped) curl_free(escaped);
     
     response_buffer_t response = {0};
     
