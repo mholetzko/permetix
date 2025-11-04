@@ -307,6 +307,20 @@ def borrow(req: BorrowRequest, request: Request):
     if auth_header.lower().startswith("bearer "):
         api_key = auth_header.split(" ", 1)[1].strip()
     
+    # If API key is provided, validate it (reject invalid keys)
+    if api_key:
+        try:
+            from .db import validate_api_key as db_validate_api_key
+            api_key_details = db_validate_api_key(api_key)
+            if not api_key_details:
+                logger.warning("invalid api key provided")
+                raise HTTPException(status_code=403, detail="Invalid API key")
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"API key validation error: {e}")
+            raise HTTPException(status_code=500, detail="API key validation failed")
+    
     is_valid, error_msg = validate_signature(request, req.tool, req.user, api_key=api_key, require=False)
     if not is_valid:
         logger.warning("Security check failed: %s", error_msg)
