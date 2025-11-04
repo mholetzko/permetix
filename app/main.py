@@ -299,7 +299,7 @@ def startup_event() -> None:
 
 @app.post("/licenses/borrow", response_model=BorrowResponse)
 def borrow(req: BorrowRequest, request: Request):
-    # Validate HMAC signature if present
+    # Validate HMAC signature
     from app.security import validate_signature
     # Extract API key from Authorization header (Bearer <key>)
     auth_header = request.headers.get("Authorization", "")
@@ -321,7 +321,7 @@ def borrow(req: BorrowRequest, request: Request):
             logger.error(f"API key validation error: {e}")
             raise HTTPException(status_code=500, detail="API key validation failed")
     
-    is_valid, error_msg = validate_signature(request, req.tool, req.user, api_key=api_key, require=False)
+    is_valid, error_msg = validate_signature(request, req.tool, req.user, api_key=api_key, require=None)
     if not is_valid:
         logger.warning("Security check failed: %s", error_msg)
         raise HTTPException(status_code=403, detail=f"Security validation failed: {error_msg}")

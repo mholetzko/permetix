@@ -6,6 +6,7 @@ Implements HMAC-based request signing to prevent unauthorized API access
 import hmac
 import hashlib
 import time
+import os
 from typing import Optional
 from fastapi import Request, HTTPException
 import logging
@@ -20,7 +21,8 @@ VENDOR_SECRETS = {
 
 # Configuration
 SIGNATURE_VALID_WINDOW = 300  # 5 minutes - prevents replay attacks
-REQUIRE_SIGNATURES = False  # Set to True to enforce (start with False for demo)
+# Enforce signatures by default; allow override via env var REQUIRE_SIGNATURES
+REQUIRE_SIGNATURES = os.getenv("REQUIRE_SIGNATURES", "true").lower() == "true"
 
 
 def generate_signature(tool: str, user: str, timestamp: str, api_key: str = "", vendor_id: str = "techvendor") -> str:
