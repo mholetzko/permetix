@@ -632,7 +632,22 @@ def get_version() -> Dict[str, str]:
 def get_budget_config():
     """Get budget configuration for all tools"""
     tools = get_all_tools()
-    return {"tools": tools}
+    # Enrich with spend protection and month-to-date cost
+    from .db import get_customer_max_spend, get_month_to_date_overage_cost
+    enriched = []
+    for t in tools:
+        tool_name = t.get("tool")
+        max_spend = get_customer_max_spend(tool_name)
+        mtd_cost = get_month_to_date_overage_cost(tool_name)
+        remaining = None
+        if max_spend is not None:
+            remaining = max(0.0, float(max_spend) - float(mtd_cost))
+        item = dict(t)
+        item["customer_max_spend"] = max_spend
+        item["month_to_date_overage_cost"] = mtd_cost
+        item["remaining_spend"] = remaining
+        enriched.append(item)
+    return {"tools": enriched}
 
 
 @app.put("/config/budget")

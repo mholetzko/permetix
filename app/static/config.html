@@ -181,6 +181,11 @@
                 <button class="btn-save" onclick="saveProtection('${t.tool}')">Save Protection</button>
                 <span id="msg-${t.tool}" class="message" style="display:none"></span>
               </div>
+              <div class="message" style="margin-top:12px;">
+                <div><strong>Month-to-date overage cost:</strong> $${(t.month_to_date_overage_cost || 0).toFixed ? t.month_to_date_overage_cost.toFixed(2) : (t.month_to_date_overage_cost || 0)}</div>
+                <div><strong>Max spend:</strong> ${t.customer_max_spend == null ? '—' : `$${Number(t.customer_max_spend).toFixed(2)}`}</div>
+                <div><strong>Remaining:</strong> ${t.customer_max_spend == null ? '—' : `$${Number(t.remaining_spend || 0).toFixed(2)}`}</div>
+              </div>
             `;
             out.appendChild(card);
           });
