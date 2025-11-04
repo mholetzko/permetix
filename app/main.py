@@ -108,7 +108,9 @@ class RealtimeMetricsBuffer:
             self.failures.popleft()
     
     def get_recent_events(self, seconds: int = 60):
-        """Get events from the last N seconds"""
+        """Get events from the last N seconds (max 6 hours)"""
+        # Limit to retention period
+        seconds = min(seconds, REALTIME_RETENTION_SECONDS)
         cutoff = datetime.now(timezone.utc) - timedelta(seconds=seconds)
         cutoff_iso = cutoff.isoformat()
         
@@ -339,11 +341,19 @@ def metrics():
 
 
 @app.get("/realtime/stats")
-def realtime_stats():
-    """Get real-time buffer statistics"""
+def realtime_stats(window: int = 60):
+    """Get real-time buffer statistics and recent events
+    
+    Args:
+        window: Time window in seconds (default 60, max 21600 for 6 hours)
+    """
+    # Limit window to retention period
+    window = min(window, REALTIME_RETENTION_SECONDS)
+    
     return {
         **realtime_buffer.get_stats_summary(),
-        "recent_60s": realtime_buffer.get_recent_events(60)
+        f"recent_{window}s": realtime_buffer.get_recent_events(window),
+        "window_seconds": window
     }
 
 
@@ -373,17 +383,17 @@ async def realtime_stream(request: Request):
                 except Exception as e:
                     logger.error(f"Error getting status in realtime stream: {e}")
                 
-                # Get recent events (last 60 seconds)
-                recent = realtime_buffer.get_recent_events(60)
+                # Get recent events (last 60 seconds for rate calculation)
+                recent_60s = realtime_buffer.get_recent_events(60)
                 
-                # Calculate rates
-                borrow_rate = len(recent["borrows"])  # per minute
-                return_rate = len(recent["returns"])  # per minute
-                failure_rate = len(recent["failures"])  # per minute
+                # Calculate rates (per minute, based on last 60 seconds)
+                borrow_rate = len(recent_60s["borrows"])  # events in last 60s = per minute
+                return_rate = len(recent_60s["returns"])
+                failure_rate = len(recent_60s["failures"])
                 
-                # Calculate overage rate
-                total_borrows = len(recent["borrows"])
-                overage_borrows = sum(1 for b in recent["borrows"] if b.get("is_overage"))
+                # Calculate overage rate (from last 60s)
+                total_borrows = len(recent_60s["borrows"])
+                overage_borrows = sum(1 for b in recent_60s["borrows"] if b.get("is_overage"))
                 overage_rate = (overage_borrows / total_borrows * 100) if total_borrows > 0 else 0
                 
                 # Build event data
@@ -397,9 +407,9 @@ async def realtime_stream(request: Request):
                         "overage_percent": round(overage_rate, 1)
                     },
                     "recent_events": {
-                        "borrows": recent["borrows"][-10:],  # Last 10
-                        "returns": recent["returns"][-10:],
-                        "failures": recent["failures"][-10:]
+                        "borrows": recent_60s["borrows"][-10:],  # Last 10 from 60s window
+                        "returns": recent_60s["returns"][-10:],
+                        "failures": recent_60s["failures"][-10:]
                     },
                     "buffer_stats": realtime_buffer.get_stats_summary()
                 }

@@ -40,13 +40,22 @@ The real-time dashboard provides **zero-lag, live monitoring** of license server
 5. **Active Licenses** - Total borrowed across all tools
 6. **Buffer Size** - Total events stored (6-hour window)
 
-### **Charts (Rolling 60-second window)**
+### **Charts (Configurable time window)**
 1. **License Borrows** - Line chart of borrow rate
 2. **Overage Checkouts** - Line chart of overage events
 3. **License Utilization by Tool** - Stacked horizontal bar chart showing:
    - In Commit (blue)
    - In Overage (orange)
    - Available (grey)
+
+**Time Range Options:**
+- 1 minute (60 seconds)
+- 5 minutes (300 seconds)
+- 10 minutes (600 seconds)
+- **30 minutes (default)** (1800 seconds)
+- 1 hour (3600 seconds)
+- 3 hours (10800 seconds)
+- 6 hours (21600 seconds - full buffer)
 
 ---
 

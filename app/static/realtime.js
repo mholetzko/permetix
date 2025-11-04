@@ -139,9 +139,37 @@ const utilizationChart = new Chart(document.getElementById('utilizationChart'), 
 });
 
 // Metrics tracking
-const WINDOW_SIZE = 60; // Keep 60 data points (60 seconds)
+let WINDOW_SIZE = 1800; // Default: 30 minutes (in seconds)
 let lastBorrowRate = 0;
 let lastOverageRate = 0;
+
+// Time range selector
+const timeRangeSelector = document.getElementById('time-range');
+timeRangeSelector.addEventListener('change', (e) => {
+  const newRange = parseInt(e.target.value);
+  WINDOW_SIZE = newRange;
+  
+  // Update chart titles
+  const label = getTimeRangeLabel(newRange);
+  document.getElementById('borrow-chart-title').textContent = `License Borrows (Last ${label})`;
+  document.getElementById('overage-chart-title').textContent = `Overage Checkouts (Last ${label})`;
+  
+  // Clear charts to start fresh with new range
+  borrowRateChart.data.labels = [];
+  borrowRateChart.data.datasets[0].data = [];
+  overageChart.data.labels = [];
+  overageChart.data.datasets[0].data = [];
+  borrowRateChart.update();
+  overageChart.update();
+  
+  console.log(`Time range changed to: ${label} (${newRange} seconds)`);
+});
+
+function getTimeRangeLabel(seconds) {
+  if (seconds < 60) return `${seconds} seconds`;
+  if (seconds < 3600) return `${Math.round(seconds / 60)} minutes`;
+  return `${Math.round(seconds / 3600)} hour${seconds > 3600 ? 's' : ''}`;
+}
 
 // Connect to SSE stream
 let eventSource = null;
@@ -337,5 +365,6 @@ console.log('Real-Time Dashboard initialized');
 console.log('- SSE endpoint: /realtime/stream');
 console.log('- Update interval: 1 second');
 console.log('- Data retention: 6 hours');
-console.log('- Chart window: 60 seconds');
+console.log('- Default chart window: 30 minutes (configurable)');
+console.log('- Available ranges: 1min, 5min, 10min, 30min, 1h, 3h, 6h');
 
