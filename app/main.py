@@ -8,7 +8,6 @@ from typing import Dict, Optional, List
 from collections import deque
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel, Field
 from prometheus_client import Counter, Gauge, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from fastapi.responses import Response, StreamingResponse
@@ -47,12 +46,19 @@ http_500_total = Counter("license_http_500_total", "Total HTTP 500 responses emi
 @app.middleware("http")
 async def catch_500s(request: Request, call_next):
     """Catch all 500 responses and increment metric."""
-    response = await call_next(request)
-    if response.status_code == 500:
+    try:
+        response = await call_next(request)
+        if response.status_code == 500:
+            route = request.url.path
+            http_500_total.labels(route=route).inc()
+            logger.warning("500 response route=%s", route)
+        return response
+    except Exception as e:
+        # Also catch unhandled exceptions
         route = request.url.path
         http_500_total.labels(route=route).inc()
-        logger.warning("500 response route=%s", route)
-    return response
+        logger.error("unhandled exception route=%s error=%s", route, str(e))
+        raise
 
 
 # Real-time metrics buffer (keeps last 6 hours)
