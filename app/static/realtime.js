@@ -618,7 +618,7 @@ function updateBorrowRateChart(borrowRate) {
     borrowRateChart.data.datasets[0].data.shift();
   }
   
-  borrowRateChart.update('none'); // Update without animation for smoothness
+  borrowRateChart.update('active'); // Update with active mode to ensure visual refresh
 }
 
 function updateOverageChart(recentBorrows) {
