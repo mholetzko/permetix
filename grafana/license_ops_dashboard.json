@@ -31,15 +31,62 @@
     },
     {
       "type": "stat",
-      "title": "500s last minute",
+      "title": "500s last minute (max)",
       "gridPos": { "x": 12, "y": 8, "w": 4, "h": 8 },
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(increase(license_http_500_total[1m]))",
+          "expr": "max_over_time(sum(increase(license_http_500_total[1m]))[5m:1m])",
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }
         }
       ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "from": 5,
+                "to": null,
+                "result": {
+                  "text": "HIGH",
+                  "color": "red"
+                }
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 0,
+                "to": 5,
+                "result": {
+                  "text": "OK",
+                  "color": "green"
+                }
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": null, "color": "green" },
+              { "value": 5, "color": "red" }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
       "alert": {
         "conditions": [
           {
