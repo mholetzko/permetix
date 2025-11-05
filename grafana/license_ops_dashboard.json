@@ -73,12 +73,12 @@
     },
     {
       "type": "piechart",
-      "title": "HTTP Status Codes Distribution",
+      "title": "HTTP Status Codes Distribution (last 5m)",
       "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (status_code) (rate(license_http_requests_total[5m]))",
+          "expr": "sum by (status_code) (increase(license_http_requests_total[5m])) > 0",
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "legendFormat": "{{status_code}}"
         }
@@ -92,6 +92,10 @@
           "displayMode": "table",
           "placement": "right",
           "values": ["value", "percent"]
+        },
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"]
         }
       }
     },
