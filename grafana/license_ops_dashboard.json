@@ -70,6 +70,43 @@
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }
         }
       ]
+    },
+    {
+      "type": "piechart",
+      "title": "HTTP Status Codes Distribution",
+      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (status_code) (rate(license_http_requests_total[5m]))",
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "legendFormat": "{{status_code}}"
+        }
+      ],
+      "options": {
+        "pieType": "pie",
+        "tooltip": {
+          "mode": "single"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": ["value", "percent"]
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Status Codes Over Time",
+      "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (status_code) (rate(license_http_requests_total[1m]))",
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "legendFormat": "{{status_code}}"
+        }
+      ]
     }
   ],
   "templating": {
