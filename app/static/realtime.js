@@ -232,6 +232,10 @@ let toolCommitChart = new Chart(document.getElementById('toolCommitChart'), {
 
 // Metrics tracking
 let WINDOW_SIZE = 1800; // Default: 30 minutes (in seconds)
+
+// Throttle chart updates to prevent blocking during heavy load
+let chartUpdatePending = false;
+let chartUpdateScheduled = false;
 let lastBorrowRate = 0;
 let lastOverageRate = 0;
 let selectedTool = 'all'; // Current tool filter
@@ -362,7 +366,7 @@ function updateToolSpecificCharts(tool, toolMetrics) {
     count: point.count
   }));
   
-  toolBorrowChart.update('active');
+  toolBorrowChart.update('none'); // Use 'none' for performance during heavy load
   
   // Fetch current tool status and borrows for other charts
   Promise.all([
@@ -498,9 +502,20 @@ function updateDashboard(data) {
     updateToolSelector(data.tools);
   }
   
-  // Update metric cards
+  // Update metric cards (lightweight, always update)
   updateMetricCards(data.rates, data.tools, data.buffer_stats);
   
+  // Throttle chart updates using requestAnimationFrame to prevent blocking
+  if (!chartUpdateScheduled) {
+    chartUpdateScheduled = true;
+    requestAnimationFrame(() => {
+      chartUpdateScheduled = false;
+      updateCharts(data);
+    });
+  }
+}
+
+function updateCharts(data) {
   // Update charts based on selected view
   if (selectedTool === 'all') {
     // Update overview charts from server-buffered history (for correct windowed history)
@@ -548,11 +563,11 @@ function rebuildOverviewFromBuffer(toolMetrics) {
   // Replace entire datasets for accurate history
   borrowRateChart.data.labels = labels;
   borrowRateChart.data.datasets[0].data = borrowCounts;
-  borrowRateChart.update('active'); // Use 'active' mode to ensure visual update
+  borrowRateChart.update('none'); // Use 'none' for performance during heavy load
   
   overageChart.data.labels = labels;
   overageChart.data.datasets[0].data = overageCounts;
-  overageChart.update('active'); // Use 'active' mode to ensure visual update
+  overageChart.update('none'); // Use 'none' for performance during heavy load
 }
 
 function updateMetricCards(rates, tools, bufferStats) {
@@ -618,7 +633,7 @@ function updateBorrowRateChart(borrowRate) {
     borrowRateChart.data.datasets[0].data.shift();
   }
   
-  borrowRateChart.update('active'); // Update with active mode to ensure visual refresh
+  borrowRateChart.update('none'); // Use 'none' for performance during heavy load
 }
 
 function updateOverageChart(recentBorrows) {
@@ -638,7 +653,7 @@ function updateOverageChart(recentBorrows) {
     overageChart.data.datasets[0].data.shift();
   }
   
-  overageChart.update('active');
+  overageChart.update('none'); // Use 'none' for performance during heavy load
 }
 
 function updateUtilizationChart(tools) {
@@ -660,7 +675,7 @@ function updateUtilizationChart(tools) {
   utilizationChart.data.datasets[1].data = inOverage;
   utilizationChart.data.datasets[2].data = available;
   
-  utilizationChart.update('active');
+  utilizationChart.update('none'); // Use 'none' for performance during heavy load
 }
 
 // Initialize connection
