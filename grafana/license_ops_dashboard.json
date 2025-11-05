@@ -39,7 +39,25 @@
           "expr": "sum(increase(license_http_500_total[1m]))",
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }
         }
-      ]
+      ],
+      "alert": {
+        "conditions": [
+          {
+            "evaluator": { "params": [5], "type": "gt" },
+            "operator": { "type": "and" },
+            "query": { "params": ["A", "1m", "now"] },
+            "reducer": { "params": [], "type": "last" },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "1m",
+        "frequency": "10s",
+        "handler": 1,
+        "name": "High 500 Error Rate",
+        "noDataState": "no_data",
+        "notifications": []
+      }
     },
     {
       "type": "stat",

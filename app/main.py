@@ -8,6 +8,7 @@ from typing import Dict, Optional, List
 from collections import deque
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel, Field
 from prometheus_client import Counter, Gauge, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from fastapi.responses import Response, StreamingResponse
@@ -41,6 +42,17 @@ max_overage_gauge = Gauge("licenses_max_overage", "Max overage allowed per tool"
 at_max_overage_gauge = Gauge("licenses_at_max_overage", "Whether tool is at max overage (1) or not (0)", ["tool"])
 overage_checkouts = Counter("license_overage_checkouts_total", "Total overage checkouts", ["tool", "user"]) 
 http_500_total = Counter("license_http_500_total", "Total HTTP 500 responses emitted by the app", ["route"]) 
+
+
+@app.middleware("http")
+async def catch_500s(request: Request, call_next):
+    """Catch all 500 responses and increment metric."""
+    response = await call_next(request)
+    if response.status_code == 500:
+        route = request.url.path
+        http_500_total.labels(route=route).inc()
+        logger.warning("500 response route=%s", route)
+    return response
 
 
 # Real-time metrics buffer (keeps last 6 hours)
@@ -405,13 +417,9 @@ def borrow(req: BorrowRequest, request: Request):
 @app.get("/faulty")
 def faulty() -> Dict[str, str]:
     """Deliberately return a 500 for demo/alerting purposes."""
-    try:
-        logger.debug("faulty endpoint triggered, simulating error")
-        raise RuntimeError("simulated failure for demo")
-    except Exception as e:
-        logger.error("faulty endpoint error=%s", str(e))
-        http_500_total.labels(route="/faulty").inc()
-        raise HTTPException(status_code=500, detail="Simulated failure")
+    logger.debug("faulty endpoint triggered, simulating error")
+    logger.error("faulty endpoint error=simulated failure for demo")
+    raise HTTPException(status_code=500, detail="Simulated failure")
 
 
 @app.post("/licenses/return")
