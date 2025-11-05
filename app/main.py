@@ -526,10 +526,33 @@ def borrow(req: BorrowRequest, request: Request):
             logger.error(f"API key validation error: {e}")
             raise HTTPException(status_code=500, detail="API key validation failed")
     
-    is_valid, error_msg = validate_signature(request, req.tool, req.user, api_key=api_key, require=None)
-    if not is_valid:
-        logger.warning("Security check failed: %s", error_msg)
-        raise HTTPException(status_code=403, detail=f"Security validation failed: {error_msg}")
+    # Check if this is a browser request (web UI) - skip signature validation for browser requests
+    origin = request.headers.get("Origin")
+    referer = request.headers.get("Referer")
+    user_agent = request.headers.get("User-Agent", "")
+    is_browser_request = origin or referer or ("Mozilla" in user_agent or "Chrome" in user_agent or "Safari" in user_agent or "Firefox" in user_agent)
+    
+    # For browser requests without signature headers, skip validation
+    # For API clients (with signature headers), always validate
+    signature = request.headers.get("X-Signature")
+    timestamp = request.headers.get("X-Timestamp")
+    has_signature_headers = signature and timestamp
+    
+    if has_signature_headers:
+        # API client with signature - validate it
+        is_valid, error_msg = validate_signature(request, req.tool, req.user, api_key=api_key, require=True)
+        if not is_valid:
+            logger.warning("Security check failed: %s", error_msg)
+            raise HTTPException(status_code=403, detail=f"Security validation failed: {error_msg}")
+    elif is_browser_request:
+        # Browser request without signature - allow it (web UI)
+        logger.debug("Browser request detected, skipping signature validation")
+    else:
+        # Non-browser request without signature - require it
+        is_valid, error_msg = validate_signature(request, req.tool, req.user, api_key=api_key, require=True)
+        if not is_valid:
+            logger.warning("Security check failed: %s", error_msg)
+            raise HTTPException(status_code=403, detail=f"Security validation failed: {error_msg}")
     
     start = time.perf_counter()
     borrow_attempts.labels(req.tool, req.user).inc()
