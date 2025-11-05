@@ -4,13 +4,10 @@
 
 ### Run the Interactive Demo
 
-```bash
-# Start the license server (if not already running)
-uvicorn app.main:app --reload
+Visit the security demo page in your browser:
 
-# In another terminal, run the security showcase
-./demo-security-showcase.sh
-```
+**Local:** http://localhost:8000/security-demo  
+**Production:** https://license-server-demo.fly.dev/security-demo
 
 This will demonstrate 5 attack scenarios:
 1. ✅ **Complete Security** - All layers present (SUCCESS)

@@ -280,11 +280,9 @@ Add to Grafana dashboard:
 - **Cost Burn Rate** ($/hour)
 - **Alert Status Panel**
 
-### **4. Demo Script Automation** ✨ NEW
-```bash
-# demo-overage-scenario.sh
-# Automated script to run the entire demo scenario
-```
+### **4. Demo Steps** 
+
+Follow the manual steps below to run the demo scenario interactively.
 
 ---
 

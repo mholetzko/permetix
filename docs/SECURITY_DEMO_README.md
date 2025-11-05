@@ -32,19 +32,7 @@ See `LICENSE_THEFT_PREVENTION.md` for full technical details.
 
 ## 🚀 Quick Start
 
-### 1. Run the Interactive Demo Script
-
-```bash
-./demo-security-attack.sh
-```
-
-This script demonstrates:
-1. ✅ **Normal operation** - Legitimate client with valid signature
-2. ❌ **Naive attack** - curl without signature (blocked)
-3. ❌ **Sophisticated attack** - Wrong signature (blocked)
-4. ❌ **Replay attack** - Old timestamp (blocked)
-
-### 2. Visit the Web UI
+### Visit the Web UI
 
 Open http://localhost:8000/security-demo (or https://cloud-vs-automotive-demo.fly.dev/security-demo)
 
@@ -136,7 +124,7 @@ else:
 
 **Script** (5 minutes):
 1. Show normal client working (30 sec)
-2. Run `./demo-security-attack.sh` (2 min)
+2. Visit `/security-demo` page in your browser (2 min)
 3. Open `/security-demo` page (1 min)
 4. Q&A with live attacks (1.5 min)
 
@@ -292,5 +280,5 @@ Your demo is successful if the audience understands:
 
 ---
 
-**Ready to present?** Start with `./demo-security-attack.sh` or open `/security-demo` in your browser! 🚀
+**Ready to present?** Open `/security-demo` in your browser! 🚀
 
