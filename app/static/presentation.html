@@ -247,8 +247,8 @@
           <li class="fragment"><strong>Feedback distance</strong>: signals arrive late via tickets/reports, not shared telemetry</li>
         </ul>
         <!-- Linear/V-model style visual -->
-        <div style="display:flex; justify-content:center; margin-top:1.2em;">
-          <svg viewBox="0 0 960 260" width="960" height="260" style="max-width:100%; height:auto;">
+        <div style="display:flex; justify-content:center; margin-top:0.6em;">
+          <svg viewBox="0 0 960 200" width="960" height="200" style="max-width:100%; height:auto;">
             <defs>
               <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#00adef"/>
@@ -262,44 +262,42 @@
             </defs>
             
             <!-- Stages: boxes left to right -->
-            <g font-family="Inter, Arial, sans-serif" font-size="14" fill="#000">
-              <rect x="20" y="40" rx="6" ry="6" width="170" height="60" fill="#eaf6ff" stroke="#00adef"/>
-              <text x="105" y="75" text-anchor="middle"><tspan font-weight="600">Plan · Design</tspan></text>
+            <g font-family="Inter, Arial, sans-serif" font-size="12" fill="#000">
+              <rect x="20" y="30" rx="6" ry="6" width="150" height="50" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="95" y="60" text-anchor="middle" font-size="13"><tspan font-weight="600">Plan · Design</tspan></text>
               
-              <rect x="220" y="40" rx="6" ry="6" width="170" height="60" fill="#eaf6ff" stroke="#00adef"/>
-              <text x="305" y="75" text-anchor="middle"><tspan font-weight="600">Build</tspan></text>
+              <rect x="200" y="30" rx="6" ry="6" width="150" height="50" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="275" y="60" text-anchor="middle" font-size="13"><tspan font-weight="600">Build</tspan></text>
               
-              <rect x="420" y="40" rx="6" ry="6" width="200" height="60" fill="#eaf6ff" stroke="#00adef"/>
-              <text x="520" y="66" text-anchor="middle"><tspan font-weight="600">Integrate · Validate</tspan></text>
-              <text x="520" y="86" text-anchor="middle" fill="#555" font-size="12">HIL / SIL / homologation</text>
+              <rect x="380" y="30" rx="6" ry="6" width="180" height="50" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="470" y="55" text-anchor="middle" font-size="13"><tspan font-weight="600">Integrate · Validate</tspan></text>
+              <text x="470" y="72" text-anchor="middle" fill="#555" font-size="10">HIL / SIL / homologation</text>
               
-              <rect x="650" y="40" rx="6" ry="6" width="180" height="60" fill="#eaf6ff" stroke="#00adef"/>
-              <text x="740" y="75" text-anchor="middle"><tspan font-weight="600">Customer Release</tspan></text>
+              <rect x="590" y="30" rx="6" ry="6" width="160" height="50" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="670" y="60" text-anchor="middle" font-size="13"><tspan font-weight="600">Customer Release</tspan></text>
               
-              <rect x="850" y="40" rx="6" ry="6" width="90" height="60" fill="#f5f5f5" stroke="#bbb"/>
-              <text x="895" y="63" text-anchor="middle" font-weight="600">Maint.</text>
-              <text x="895" y="83" text-anchor="middle" fill="#777" font-size="12">rare</text>
+              <rect x="780" y="30" rx="6" ry="6" width="80" height="50" fill="#f5f5f5" stroke="#bbb"/>
+              <text x="820" y="55" text-anchor="middle" font-size="12" font-weight="600">Maint.</text>
+              <text x="820" y="70" text-anchor="middle" fill="#777" font-size="10">rare</text>
             </g>
             
             <!-- Main flow arrows -->
-            <path d="M190,70 L220,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlue)"/>
-            <path d="M390,70 L420,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlue)"/>
-            <path d="M620,70 L650,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlue)"/>
-            <path d="M830,70 L850,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlue)"/>
+            <path d="M170,55 L200,55" stroke="#00adef" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+            <path d="M350,55 L380,55" stroke="#00adef" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+            <path d="M560,55 L590,55" stroke="#00adef" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+            <path d="M750,55 L780,55" stroke="#00adef" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
             
             <!-- Internal iteration between centers (EE Releases) above the flow -->
-            <!-- Plan (105,70) → Build (305,70), drawn above at y≈40 -->
-            <path d="M105,40 C 150,10 260,10 305,40" fill="none" stroke="#2e7d32" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
-            <!-- Integrate (520,70) → Build (305,70), drawn above at y≈40 -->
-            <path d="M520,40 C 470,10 350,10 305,40" fill="none" stroke="#2e7d32" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
-            <text x="305" y="14" text-anchor="middle" fill="#2e7d32" font-size="12">fast internal feedback / EE Releases</text>
+            <path d="M95,30 C 140,5 230,5 275,30" fill="none" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <path d="M470,30 C 430,5 320,5 275,30" fill="none" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="275" y="10" text-anchor="middle" fill="#2e7d32" font-size="11">fast internal feedback / EE Releases</text>
 
             <!-- Distant field/external feedback: thin, dashed, bottom-center to bottom-center -->
-            <path d="M740,100 C 700,200 300,200 105,100" fill="none" stroke="#d32f2f" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#arrowRed)"/>
-            <text x="422" y="198" text-anchor="middle" fill="#d32f2f" font-size="13">external/field feedback is hard (late, Strac / Jira / …)</text>
+            <path d="M670,80 C 640,150 260,150 95,80" fill="none" stroke="#d32f2f" stroke-width="1.8" stroke-dasharray="5 5" marker-end="url(#arrowRed)"/>
+            <text x="380" y="148" text-anchor="middle" fill="#d32f2f" font-size="11">external/field feedback is hard (late, Strac / Jira / …)</text>
           </svg>
         </div>
-        <p class="subtitle" style="margin-top:1em">Inspired by developer journey mapping and feedback-loop thinking [1]</p>
+        <p class="subtitle" style="margin-top:0.5em; font-size:0.65em">Inspired by developer journey mapping and feedback-loop thinking [1]</p>
       </section>
 
       <!-- Slide 3: Cloud Development Journey -->
@@ -316,8 +314,8 @@
           <li class="fragment"><strong>Operate</strong> (SLOs/alerts, dashboards, on‑call)</li>
           <li class="fragment"><strong>Feedback is near</strong>: live telemetry to the team (logs, metrics, traces)</li>
         </ul>
-        <div style="display:flex; justify-content:center; margin-top:1.2em;">
-          <svg viewBox="0 0 980 260" width="980" height="260" style="max-width:100%; height:auto;">
+        <div style="display:flex; justify-content:center; margin-top:0.6em;">
+          <svg viewBox="0 0 980 200" width="980" height="200" style="max-width:100%; height:auto;">
             <defs>
               <marker id="arrowBlueC" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#00adef"/>
@@ -326,27 +324,27 @@
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e7d32"/>
               </marker>
             </defs>
-            <g font-family="Inter, Arial, sans-serif" font-size="14" fill="#000">
-              <rect x="40" y="40" rx="6" ry="6" width="170" height="60" fill="#eaf6ff" stroke="#00adef"/>
-              <text x="125" y="66" text-anchor="middle"><tspan font-weight="600">Plan · Design</tspan></text>
-              <text x="125" y="86" text-anchor="middle" fill="#555" font-size="12">SLOs</text>
-              <rect x="240" y="40" rx="6" ry="6" width="170" height="60" fill="#eaf6ff" stroke="#00adef"/>
-              <text x="325" y="66" text-anchor="middle"><tspan font-weight="600">Build</tspan></text>
-              <text x="325" y="86" text-anchor="middle" fill="#555" font-size="12">CI · Tests · Flags</text>
-              <rect x="440" y="40" rx="6" ry="6" width="170" height="60" fill="#eaf6ff" stroke="#00adef"/>
-              <text x="525" y="66" text-anchor="middle"><tspan font-weight="600">Deploy</tspan></text>
-              <text x="525" y="86" text-anchor="middle" fill="#555" font-size="12">CD · Rollback</text>
-              <rect x="640" y="40" rx="6" ry="6" width="220" height="60" fill="#eaf6ff" stroke="#00adef"/>
-              <text x="750" y="66" text-anchor="middle"><tspan font-weight="600">Operate</tspan></text>
-              <text x="750" y="86" text-anchor="middle" fill="#555" font-size="12">SLOs · Alerts · Dashboards</text>
+            <g font-family="Inter, Arial, sans-serif" font-size="12" fill="#000">
+              <rect x="40" y="30" rx="6" ry="6" width="150" height="50" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="115" y="55" text-anchor="middle" font-size="13"><tspan font-weight="600">Plan · Design</tspan></text>
+              <text x="115" y="72" text-anchor="middle" fill="#555" font-size="10">SLOs</text>
+              <rect x="220" y="30" rx="6" ry="6" width="150" height="50" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="295" y="55" text-anchor="middle" font-size="13"><tspan font-weight="600">Build</tspan></text>
+              <text x="295" y="72" text-anchor="middle" fill="#555" font-size="10">CI · Tests · Flags</text>
+              <rect x="400" y="30" rx="6" ry="6" width="150" height="50" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="475" y="55" text-anchor="middle" font-size="13"><tspan font-weight="600">Deploy</tspan></text>
+              <text x="475" y="72" text-anchor="middle" fill="#555" font-size="10">CD · Rollback</text>
+              <rect x="580" y="30" rx="6" ry="6" width="200" height="50" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="680" y="55" text-anchor="middle" font-size="13"><tspan font-weight="600">Operate</tspan></text>
+              <text x="680" y="72" text-anchor="middle" fill="#555" font-size="10">SLOs · Alerts · Dashboards</text>
             </g>
-            <path d="M210,70 L240,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlueC)"/>
-            <path d="M410,70 L440,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlueC)"/>
-            <path d="M610,70 L640,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlueC)"/>
-            <path d="M750,40 C 640,12 430,12 325,40" fill="none" stroke="#2e7d32" stroke-width="2.2" marker-end="url(#arrowGreenC)"/>
-            <path d="M750,100 C 600,200 200,200 125,100" fill="none" stroke="#2e7d32" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrowGreenC)"/>
-            <text x="520" y="22" text-anchor="middle" fill="#2e7d32" font-size="12">live telemetry → fast fixes</text>
-            <text x="520" y="196" text-anchor="middle" fill="#2e7d32" font-size="12">logs / metrics / traces · SLO alerts</text>
+            <path d="M190,55 L220,55" stroke="#00adef" stroke-width="2.5" marker-end="url(#arrowBlueC)"/>
+            <path d="M370,55 L400,55" stroke="#00adef" stroke-width="2.5" marker-end="url(#arrowBlueC)"/>
+            <path d="M550,55 L580,55" stroke="#00adef" stroke-width="2.5" marker-end="url(#arrowBlueC)"/>
+            <path d="M680,30 C 590,8 420,8 295,30" fill="none" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrowGreenC)"/>
+            <path d="M680,80 C 580,150 200,150 115,80" fill="none" stroke="#2e7d32" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrowGreenC)"/>
+            <text x="490" y="18" text-anchor="middle" fill="#2e7d32" font-size="11">live telemetry → fast fixes</text>
+            <text x="490" y="148" text-anchor="middle" fill="#2e7d32" font-size="11">logs / metrics / traces · SLO alerts</text>
           </svg>
         </div>
       </section>
