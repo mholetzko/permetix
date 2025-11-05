@@ -362,7 +362,7 @@ function updateToolSpecificCharts(tool, toolMetrics) {
     count: point.count
   }));
   
-  toolBorrowChart.update('none');
+  toolBorrowChart.update('active');
   
   // Fetch current tool status and borrows for other charts
   Promise.all([
@@ -504,7 +504,7 @@ function updateDashboard(data) {
   // Update charts based on selected view
   if (selectedTool === 'all') {
     // Update overview charts from server-buffered history (for correct windowed history)
-    if (toolMetricsCache) {
+    if (toolMetricsCache && Object.keys(toolMetricsCache).length > 0) {
       rebuildOverviewFromBuffer(toolMetricsCache);
     } else {
       // Fallback to live tick if buffer not yet available
@@ -514,7 +514,7 @@ function updateDashboard(data) {
     updateUtilizationChart(data.tools);
   } else {
     // Update tool-specific charts with server-buffered data
-    if (toolMetricsCache) {
+    if (toolMetricsCache && toolMetricsCache[selectedTool]) {
       updateToolSpecificCharts(selectedTool, toolMetricsCache);
     }
   }
@@ -548,11 +548,11 @@ function rebuildOverviewFromBuffer(toolMetrics) {
   // Replace entire datasets for accurate history
   borrowRateChart.data.labels = labels;
   borrowRateChart.data.datasets[0].data = borrowCounts;
-  borrowRateChart.update('none');
+  borrowRateChart.update('active'); // Use 'active' mode to ensure visual update
   
   overageChart.data.labels = labels;
   overageChart.data.datasets[0].data = overageCounts;
-  overageChart.update('none');
+  overageChart.update('active'); // Use 'active' mode to ensure visual update
 }
 
 function updateMetricCards(rates, tools, bufferStats) {
@@ -638,7 +638,7 @@ function updateOverageChart(recentBorrows) {
     overageChart.data.datasets[0].data.shift();
   }
   
-  overageChart.update('none');
+  overageChart.update('active');
 }
 
 function updateUtilizationChart(tools) {
@@ -660,7 +660,7 @@ function updateUtilizationChart(tools) {
   utilizationChart.data.datasets[1].data = inOverage;
   utilizationChart.data.datasets[2].data = available;
   
-  utilizationChart.update('none');
+  utilizationChart.update('active');
 }
 
 // Initialize connection
