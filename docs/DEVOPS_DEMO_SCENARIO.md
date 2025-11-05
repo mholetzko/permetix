@@ -258,7 +258,7 @@ groups:
         annotations:
           summary: "High overage rate detected"
           description: "Overage rate is {{ $value }}% over last 5 minutes"
-          dashboard: "https://mholetzko.grafana.net/d/license-business-metrics"
+          dashboard: "https://mholetzko.grafana.net/d/license-business-metrics/license-business-metrics?orgId=1&from=now-6h&to=now&timezone=browser&var-DS_PROMETHEUS=grafanacloud-prom&refresh=10s"
           
       - alert: OverageLimitReached
         expr: licenses_overage >= licenses_max_overage
