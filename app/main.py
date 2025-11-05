@@ -3,6 +3,7 @@ import time
 import uuid
 import asyncio
 import json
+import urllib.parse
 from datetime import datetime, timezone, timedelta
 from typing import Dict, Optional, List
 from collections import deque
@@ -34,10 +35,36 @@ resource = Resource.create({
 })
 
 trace_provider = TracerProvider(resource=resource)
+
+# Parse headers - support both URL-encoded (Authorization=Basic%20...) and standard (Authorization: Basic ...)
+headers_str = os.getenv("OTEL_EXPORTER_OTLP_HEADERS", "")
+headers = {}
+if headers_str:
+    # Handle URL-encoded format (Authorization=Basic%20...) - Grafana Cloud format
+    if "=" in headers_str and ("%20" in headers_str or "%3D" in headers_str):
+        # URL decode: Authorization=Basic%20... -> Authorization=Basic ...
+        decoded = urllib.parse.unquote(headers_str)
+        # Convert to dict format: Authorization=Basic ... -> {"Authorization": "Basic ..."}
+        if "=" in decoded:
+            key, value = decoded.split("=", 1)
+            headers[key] = value
+    # Standard format: "Authorization: Basic ..." or "key1: value1, key2: value2"
+    elif ":" in headers_str:
+        if "," in headers_str:
+            # Multiple headers
+            for header in headers_str.split(","):
+                if ":" in header:
+                    key, value = header.split(":", 1)
+                    headers[key.strip()] = value.strip()
+        else:
+            # Single header
+            key, value = headers_str.split(":", 1)
+            headers[key.strip()] = value.strip()
+
 processor = BatchSpanProcessor(
     OTLPSpanExporter(
         endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://tempo:4318/v1/traces"),
-        headers=os.getenv("OTEL_EXPORTER_OTLP_HEADERS", ""),
+        headers=headers if headers else None,
     )
 )
 trace_provider.add_span_processor(processor)
