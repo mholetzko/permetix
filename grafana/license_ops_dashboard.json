@@ -24,7 +24,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (route) (rate(license_http_500_total[1m]))",
+          "expr": "sum by (route) (rate(license_http_requests_total{status_code=\"500\"}[1m]))",
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }
         }
       ]
@@ -36,7 +36,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "max_over_time(sum(increase(license_http_500_total[1m]))[5m:1m])",
+          "expr": "max_over_time(sum(increase(license_http_requests_total{status_code=\"500\"}[1m]))[5m:1m]) or vector(0)",
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }
         }
       ],
