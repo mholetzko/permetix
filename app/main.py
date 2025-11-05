@@ -40,24 +40,36 @@ commit_gauge = Gauge("licenses_commit", "Commit quantity per tool", ["tool"])
 max_overage_gauge = Gauge("licenses_max_overage", "Max overage allowed per tool", ["tool"])
 at_max_overage_gauge = Gauge("licenses_at_max_overage", "Whether tool is at max overage (1) or not (0)", ["tool"])
 overage_checkouts = Counter("license_overage_checkouts_total", "Total overage checkouts", ["tool", "user"]) 
-http_500_total = Counter("license_http_500_total", "Total HTTP 500 responses emitted by the app", ["route"]) 
+# HTTP status code metrics - tracks all responses by route and status code
+http_requests_total = Counter("license_http_requests_total", "Total HTTP requests by route and status code", ["route", "method", "status_code"])
+http_500_total = Counter("license_http_500_total", "Total HTTP 500 responses emitted by the app", ["route"])  # Kept for backward compatibility
 
 
 @app.middleware("http")
-async def catch_500s(request: Request, call_next):
-    """Catch all 500 responses and increment metric."""
+async def track_http_responses(request: Request, call_next):
+    """Track all HTTP responses by route, method, and status code."""
     try:
         response = await call_next(request)
-        if response.status_code == 500:
-            route = request.url.path
+        route = request.url.path
+        method = request.method
+        status = response.status_code
+        
+        # Track all status codes
+        http_requests_total.labels(route=route, method=method, status_code=str(status)).inc()
+        
+        # Also track 500s specifically (for backward compatibility and easier alerting)
+        if status == 500:
             http_500_total.labels(route=route).inc()
-            logger.warning("500 response route=%s", route)
+            logger.warning("500 response route=%s method=%s", route, method)
+        
         return response
     except Exception as e:
-        # Also catch unhandled exceptions
+        # Catch unhandled exceptions (these become 500s)
         route = request.url.path
+        method = request.method
+        http_requests_total.labels(route=route, method=method, status_code="500").inc()
         http_500_total.labels(route=route).inc()
-        logger.error("unhandled exception route=%s error=%s", route, str(e))
+        logger.error("unhandled exception route=%s method=%s error=%s", route, method, str(e))
         raise
 
 
