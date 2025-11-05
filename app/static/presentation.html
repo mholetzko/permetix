@@ -232,23 +232,126 @@
         </p>
       </section>
 
-      <!-- Slide 2: The Problem -->
+      <!-- Slide 2: Automotive Development Model -->
       <section>
-        <div class="section-label">The Challenge</div>
-        <h2>Automotive Error Resolution</h2>
+        <div class="section-label">Automotive Model</div>
+        <h2>Automotive Development Journey (Edge/IoT)</h2>
         <div class="key-difference">
-          Errors travel through long, fragmented paths before reaching engineering teams
+          Customer feedback is far from the developer; the journey classically ends at customer release
         </div>
         <ul>
-          <li class="fragment">Error occurs in vehicle</li>
-          <li class="fragment">Support ticket created</li>
-          <li class="fragment">Passed through 1st → 2nd → 3rd level support</li>
-          <li class="fragment">Which software? Which version? Which ECU?</li>
-          <li class="fragment">Days or weeks to triage</li>
+          <li class="fragment"><strong>Plan → Design → Build</strong> (HW/SW, safety cases, determinism)</li>
+          <li class="fragment"><strong>Integrate & Validate</strong> (HIL/SIL, homologation, long cycles)</li>
+          <li class="fragment"><strong>Release to customer</strong> ("must be perfect" mindset)</li>
+          <li class="fragment"><strong>Maintenance mode</strong> (very rare changes, long lead times)</li>
+          <li class="fragment"><strong>Feedback distance</strong>: signals arrive late via tickets/reports, not shared telemetry</li>
         </ul>
+        <!-- Linear/V-model style visual -->
+        <div style="display:flex; justify-content:center; margin-top:1.2em;">
+          <svg viewBox="0 0 960 260" width="960" height="260" style="max-width:100%; height:auto;">
+            <defs>
+              <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#00adef"/>
+              </marker>
+              <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#d32f2f"/>
+              </marker>
+              <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e7d32"/>
+              </marker>
+            </defs>
+            
+            <!-- Stages: boxes left to right -->
+            <g font-family="Inter, Arial, sans-serif" font-size="14" fill="#000">
+              <rect x="20" y="40" rx="6" ry="6" width="170" height="60" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="105" y="75" text-anchor="middle"><tspan font-weight="600">Plan · Design</tspan></text>
+              
+              <rect x="220" y="40" rx="6" ry="6" width="170" height="60" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="305" y="75" text-anchor="middle"><tspan font-weight="600">Build</tspan></text>
+              
+              <rect x="420" y="40" rx="6" ry="6" width="200" height="60" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="520" y="66" text-anchor="middle"><tspan font-weight="600">Integrate · Validate</tspan></text>
+              <text x="520" y="86" text-anchor="middle" fill="#555" font-size="12">HIL / SIL / homologation</text>
+              
+              <rect x="650" y="40" rx="6" ry="6" width="180" height="60" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="740" y="75" text-anchor="middle"><tspan font-weight="600">Customer Release</tspan></text>
+              
+              <rect x="850" y="40" rx="6" ry="6" width="90" height="60" fill="#f5f5f5" stroke="#bbb"/>
+              <text x="895" y="63" text-anchor="middle" font-weight="600">Maint.</text>
+              <text x="895" y="83" text-anchor="middle" fill="#777" font-size="12">rare</text>
+            </g>
+            
+            <!-- Main flow arrows -->
+            <path d="M190,70 L220,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlue)"/>
+            <path d="M390,70 L420,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlue)"/>
+            <path d="M620,70 L650,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlue)"/>
+            <path d="M830,70 L850,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlue)"/>
+            
+            <!-- Internal iteration between centers (EE Releases) above the flow -->
+            <!-- Plan (105,70) → Build (305,70), drawn above at y≈40 -->
+            <path d="M105,40 C 150,10 260,10 305,40" fill="none" stroke="#2e7d32" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
+            <!-- Integrate (520,70) → Build (305,70), drawn above at y≈40 -->
+            <path d="M520,40 C 470,10 350,10 305,40" fill="none" stroke="#2e7d32" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
+            <text x="305" y="14" text-anchor="middle" fill="#2e7d32" font-size="12">fast internal feedback / EE Releases</text>
+
+            <!-- Distant field/external feedback: thin, dashed, bottom-center to bottom-center -->
+            <path d="M740,100 C 700,200 300,200 105,100" fill="none" stroke="#d32f2f" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#arrowRed)"/>
+            <text x="422" y="198" text-anchor="middle" fill="#d32f2f" font-size="13">external/field feedback is hard (late, Strac / Jira / …)</text>
+          </svg>
+        </div>
+        <p class="subtitle" style="margin-top:1em">Inspired by developer journey mapping and feedback-loop thinking [1]</p>
       </section>
 
-      <!-- Slide 3: Cloud is Different -->
+      <!-- Slide 3: Cloud Development Journey -->
+      <section>
+        <div class="section-label">Cloud Model</div>
+        <h2>Cloud Development Journey</h2>
+        <div class="key-difference">
+          Product team owns build → run with shared observability and short feedback cycles
+        </div>
+        <ul>
+          <li class="fragment"><strong>Plan · Design</strong> (product backlog, SLOs defined)</li>
+          <li class="fragment"><strong>Build</strong> (CI, tests, feature flags)</li>
+          <li class="fragment"><strong>Deploy</strong> (CD, fast rollback)</li>
+          <li class="fragment"><strong>Operate</strong> (SLOs/alerts, dashboards, on‑call)</li>
+          <li class="fragment"><strong>Feedback is near</strong>: live telemetry to the team (logs, metrics, traces)</li>
+        </ul>
+        <div style="display:flex; justify-content:center; margin-top:1.2em;">
+          <svg viewBox="0 0 980 260" width="980" height="260" style="max-width:100%; height:auto;">
+            <defs>
+              <marker id="arrowBlueC" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#00adef"/>
+              </marker>
+              <marker id="arrowGreenC" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e7d32"/>
+              </marker>
+            </defs>
+            <g font-family="Inter, Arial, sans-serif" font-size="14" fill="#000">
+              <rect x="40" y="40" rx="6" ry="6" width="170" height="60" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="125" y="66" text-anchor="middle"><tspan font-weight="600">Plan · Design</tspan></text>
+              <text x="125" y="86" text-anchor="middle" fill="#555" font-size="12">SLOs</text>
+              <rect x="240" y="40" rx="6" ry="6" width="170" height="60" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="325" y="66" text-anchor="middle"><tspan font-weight="600">Build</tspan></text>
+              <text x="325" y="86" text-anchor="middle" fill="#555" font-size="12">CI · Tests · Flags</text>
+              <rect x="440" y="40" rx="6" ry="6" width="170" height="60" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="525" y="66" text-anchor="middle"><tspan font-weight="600">Deploy</tspan></text>
+              <text x="525" y="86" text-anchor="middle" fill="#555" font-size="12">CD · Rollback</text>
+              <rect x="640" y="40" rx="6" ry="6" width="220" height="60" fill="#eaf6ff" stroke="#00adef"/>
+              <text x="750" y="66" text-anchor="middle"><tspan font-weight="600">Operate</tspan></text>
+              <text x="750" y="86" text-anchor="middle" fill="#555" font-size="12">SLOs · Alerts · Dashboards</text>
+            </g>
+            <path d="M210,70 L240,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlueC)"/>
+            <path d="M410,70 L440,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlueC)"/>
+            <path d="M610,70 L640,70" stroke="#00adef" stroke-width="3" marker-end="url(#arrowBlueC)"/>
+            <path d="M750,40 C 640,12 430,12 325,40" fill="none" stroke="#2e7d32" stroke-width="2.2" marker-end="url(#arrowGreenC)"/>
+            <path d="M750,100 C 600,200 200,200 125,100" fill="none" stroke="#2e7d32" stroke-width="2.2" stroke-dasharray="4 4" marker-end="url(#arrowGreenC)"/>
+            <text x="520" y="22" text-anchor="middle" fill="#2e7d32" font-size="12">live telemetry → fast fixes</text>
+            <text x="520" y="196" text-anchor="middle" fill="#2e7d32" font-size="12">logs / metrics / traces · SLO alerts</text>
+          </svg>
+        </div>
+      </section>
+
+      <!-- Slide 4: Cloud is Different -->
       <section>
         <div class="section-label">Cloud DevOps</div>
         <h2>Direct Telemetry Access</h2>
@@ -277,14 +380,14 @@
         </ul>
       </section>
 
-      <!-- Slide 4: Side-by-Side Comparison -->
+      <!-- Slide 5: Side-by-Side Comparison -->
       <section>
         <div class="section-label">Comparison</div>
         <h2>Same Incident, Two Paths</h2>
         <div class="comparison-grid">
           <div class="comparison-box automotive">
             <h3>Automotive (Edge/IoT)</h3>
-            <div class="flow-step red">Ticket → L1 → L2 → L3</div>
+            <div class="flow-step red">Ticket → Strac / Jira / …</div>
             <div class="flow-step red">Many collectors fragment data</div>
             <div class="flow-step red">"Which build?"</div>
             <div class="flow-step red">Escalations across teams</div>
@@ -297,6 +400,17 @@
             <div class="flow-step">Loki filtered by version</div>
             <div class="flow-step">Metrics → code mapped</div>
             <div class="flow-step">Minutes to fix</div>
+          </div>
+        </div>
+        <!-- Ownership boxes -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+          <div style="background:#fafafa; border:1px solid #e0e0e0; padding:12px;">
+            <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:#333; margin-bottom:6px;">Ownership (Automotive)</div>
+            <div style="font-size:13px; color:#555;">Tiered support; engineering later; accountability diffused</div>
+          </div>
+          <div style="background:#fafafa; border:1px solid #e0e0e0; padding:12px;">
+            <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:#333; margin-bottom:6px;">Ownership (Cloud)</div>
+            <div style="font-size:13px; color:#555;">Product team owns build → run; on‑call; MTTR is a KPI</div>
           </div>
         </div>
       </section>
@@ -345,31 +459,28 @@
         </div>
       </section>
 
-      <!-- Slide 7: The Operational Difference -->
+      <!-- Slide 8: Bridging the Gap (the thin line) -->
       <section>
-        <div class="section-label">Critical Difference</div>
-        <h2>Operational Model</h2>
-        <div class="key-difference">
-          <p><strong>Vehicles:</strong> Many collectors & aggregators → data fragments across organizations</p>
-          <p style="margin-top:1.2em"><strong>Cloud:</strong> L1/L2/L3 exist, BUT everyone sees the <span class="highlight">same telemetry in the same tools</span></p>
+        <div class="section-label">Bridging the Gap</div>
+        <h2>The thin line: Cloud benefits vs. Automotive realities</h2>
+        <p class="subtitle">Not everything that glitters is gold — different goals and constraints</p>
+        <div class="comparison-grid" style="margin-top:0.8em">
+          <div class="comparison-box automotive">
+            <h3>Automotive (Edge/IoT)</h3>
+            <p><strong>Safety & regulation first</strong> — homologation, determinism, long validation</p>
+            <p><strong>Expectation of perfection at release</strong> — customer-ready, very rare changes</p>
+            <p><strong>Feedback distance</strong> — Strac/Jira/… instead of shared live telemetry</p>
+          </div>
+          <div class="comparison-box">
+            <h3>Cloud DevOps</h3>
+            <p><strong>Operate as part of the product</strong> — team owns build → run</p>
+            <p><strong>Near feedback</strong> — logs/metrics/traces + SLO alerts</p>
+            <p><strong>Frequent change</strong> — CI/CD, flags, rollback in minutes</p>
+          </div>
         </div>
-        <p class="fragment" style="margin-top:1em; font-size:0.8em">
-          Shared visibility enables fast, collaborative resolution
-        </p>
-      </section>
-
-      <!-- Slide 8: Bridging the Gap -->
-      <section>
-        <div class="section-label">Solution</div>
-        <h2>Bridging the Gap</h2>
-        <p class="subtitle">How to bring Cloud DevOps practices to Edge/IoT</p>
-        <ol style="margin-top:0.8em">
-          <li class="fragment"><strong>Transform continuous → discrete:</strong> Sample, aggregate, emit events</li>
-          <li class="fragment"><strong>Observability Gateway:</strong> Edge processes signals before cloud</li>
-          <li class="fragment"><strong>Correlation IDs:</strong> Link vehicle ID → session → error</li>
-          <li class="fragment"><strong>Unified Stack:</strong> Same Grafana/Loki/Prometheus for all</li>
-          <li class="fragment"><strong>Shared Access:</strong> Everyone sees same data, no handoffs</li>
-        </ol>
+        <div class="key-difference" style="margin-top:1em">
+          Cloud practices improve detection and ownership; Automotive constraints protect safety and brand — the art is choosing what to adopt without breaking what matters.
+        </div>
       </section>
 
       <!-- Slide 9: The Unified Stack -->
