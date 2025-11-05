@@ -633,7 +633,7 @@
           <a href="http://localhost:3000" target="_blank" class="tool-link">Grafana</a>
         </p>
         <p style="font-size:0.6em; margin-top:2.5em; color:#999; font-weight:300">
-          Press <span class="highlight">Esc</span> for overview • <span class="highlight">F</span> for fullscreen
+          Press <span class="highlight">Esc</span> for overview • <span class="highlight">F</span> for fullscreen • <span class="highlight">P</span> for PDF export
         </p>
       </section>
 
@@ -670,6 +670,39 @@
       minScale: 0.2,
       maxScale: 2.0
     });
+    
+    // PDF Export functionality
+    function exportToPDF() {
+      const currentUrl = window.location.href;
+      const separator = currentUrl.includes('?') ? '&' : '?';
+      const printUrl = currentUrl + separator + 'print-pdf';
+      window.open(printUrl, '_blank');
+      
+      // Auto-trigger print dialog after a short delay
+      setTimeout(() => {
+        window.print();
+      }, 1000);
+    }
+    
+    // Add export button
+    const exportBtn = document.createElement('button');
+    exportBtn.className = 'export-button';
+    exportBtn.textContent = '📄 Export PDF';
+    exportBtn.title = 'Export presentation to PDF';
+    exportBtn.onclick = exportToPDF;
+    document.body.appendChild(exportBtn);
+    
+    // Handle print-pdf mode
+    if (window.location.search.match(/print-pdf/gi)) {
+      // Add print stylesheet
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/white.css';
+      document.head.appendChild(link);
+      
+      // Hide export button in print mode
+      if (exportBtn) exportBtn.style.display = 'none';
+    }
   </script>
 </body>
 </html>
