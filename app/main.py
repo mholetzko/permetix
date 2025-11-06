@@ -182,6 +182,42 @@ http_request_duration = Histogram("license_http_request_duration_seconds", "HTTP
 
 
 @app.middleware("http")
+async def tenant_middleware(request: Request, call_next):
+    """Extract tenant from subdomain for multi-tenant routing on Fly.io"""
+    host = request.headers.get("host", "").split(":")[0]  # Remove port
+    parts = host.split(".")
+    
+    # Extract subdomain (first part before first dot)
+    # Examples:
+    #   acme.permetrix.fly.dev → subdomain = "acme"
+    #   vendor.permetrix.fly.dev → subdomain = "vendor"
+    #   permetrix.fly.dev → subdomain = None
+    if len(parts) >= 3:  # subdomain.domain.tld
+        subdomain = parts[0]
+    else:
+        subdomain = None
+    
+    # Determine context
+    if subdomain == "vendor":
+        request.state.context = "vendor"
+        request.state.tenant_id = None
+    elif subdomain:
+        # Check if subdomain is a valid tenant (will be validated in routes)
+        request.state.context = "tenant"
+        request.state.tenant_id = subdomain
+    else:
+        request.state.context = "main"
+        request.state.tenant_id = None
+    
+    # Log tenant context for debugging
+    if subdomain:
+        logger.debug(f"tenant_middleware host={host} subdomain={subdomain} context={request.state.context} tenant_id={request.state.tenant_id}")
+    
+    response = await call_next(request)
+    return response
+
+
+@app.middleware("http")
 async def track_http_responses(request: Request, call_next):
     """Track all HTTP responses by route, method, status code, duration, and request ID."""
     request_id = str(uuid.uuid4())[:8]  # Short request ID for traceability
