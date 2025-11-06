@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Account - Permetrix</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .setup-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 48px;
+            background: var(--mb-white);
+            border: 1px solid var(--mb-gray-300);
+        }
+        .setup-container h1 {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .setup-container p {
+            font-size: 13px;
+            color: var(--mb-gray-700);
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--mb-gray-700);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--mb-gray-300);
+            font-size: 14px;
+            background: var(--mb-white);
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--mb-blue);
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: var(--mb-black);
+            color: var(--mb-white);
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: var(--mb-gray-700);
+        }
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            border: 1px solid #fcc;
+        }
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            border: 1px solid #cfc;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <h1>Setup Account</h1>
+        <p>Set your password to complete account setup</p>
+        <div id="error-message" class="error-message" style="display: none;"></div>
+        <div id="success-message" class="success-message" style="display: none;"></div>
+        <form id="setup-form" method="POST" action="/api/auth/setup">
+            <div class="form-group">
+                <label for="setup-token">Setup Token</label>
+                <input type="text" id="setup-token" name="setup_token" required readonly>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required minlength="8">
+            </div>
+            <div class="form-group">
+                <label for="password-confirm">Confirm Password</label>
+                <input type="password" id="password-confirm" name="password_confirm" required minlength="8">
+            </div>
+            <button type="submit" class="btn-primary">Complete Setup</button>
+        </form>
+    </div>
+    <script>
+        // Auto-fill token from URL if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        if (token) {
+            document.getElementById('setup-token').value = token;
+        }
+        
+        document.getElementById('setup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const password = formData.get('password');
+            const passwordConfirm = formData.get('password_confirm');
+            const errorDiv = document.getElementById('error-message');
+            const successDiv = document.getElementById('success-message');
+            
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            // Validate passwords match
+            if (password !== passwordConfirm) {
+                errorDiv.textContent = 'Passwords do not match';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Remove password_confirm from form data
+            formData.delete('password_confirm');
+            
+            try {
+                const response = await fetch('/api/auth/setup', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    // Redirect handled by server
+                    window.location.href = response.url || '/dashboard';
+                } else {
+                    const error = await response.json();
+                    errorDiv.textContent = error.detail || 'Setup failed';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errorDiv.textContent = 'Network error. Please try again.';
+                errorDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
+

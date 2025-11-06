@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Permetrix</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="mb-header">
+        <div class="mb-brand">Permetrix</div>
+        <div class="mb-nav">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/profile">Profile</a>
+            <a href="/api/auth/logout">Logout</a>
+        </div>
+    </div>
+    <div class="container" style="max-width: 800px; margin: 48px auto; padding: 0 48px;">
+        <h1 style="font-size: 32px; font-weight: 300; margin-bottom: 32px; letter-spacing: 2px;">User Profile</h1>
+        <div id="profile-info" style="background: var(--mb-white); border: 1px solid var(--mb-gray-300); padding: 32px;">
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--mb-gray-700);">Username</label>
+                <div id="username" style="font-size: 16px; color: var(--mb-black);"></div>
+            </div>
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--mb-gray-700);">Role</label>
+                <div id="role" style="font-size: 16px; color: var(--mb-black);"></div>
+            </div>
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--mb-gray-700);">Tenant</label>
+                <div id="tenant" style="font-size: 16px; color: var(--mb-black);"></div>
+            </div>
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--mb-gray-700);">Vendor</label>
+                <div id="vendor" style="font-size: 16px; color: var(--mb-black);"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/auth/me');
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('username').textContent = user.username || 'N/A';
+                    document.getElementById('role').textContent = user.role || 'user';
+                    document.getElementById('tenant').textContent = user.tenant_id || 'N/A';
+                    document.getElementById('vendor').textContent = user.vendor_id || 'N/A';
+                } else {
+                    // Not authenticated, redirect to login
+                    window.location.href = '/login';
+                }
+            } catch (err) {
+                console.error('Error loading profile:', err);
+                window.location.href = '/login';
+            }
+        }
+        loadProfile();
+    </script>
+</body>
+</html>
+

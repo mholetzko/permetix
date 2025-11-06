@@ -9,14 +9,16 @@ from datetime import datetime, timezone, timedelta
 from typing import Dict, Optional, List
 from collections import deque
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Depends, Cookie, Form
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 from prometheus_client import Counter, Gauge, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from fastapi.responses import Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
-from .db import initialize_database, borrow_license, return_license, get_status, update_budget_config, get_all_tools, get_overage_charges, get_all_tenants, get_vendor_customers, provision_license_to_tenant, create_tenant, create_vendor, get_all_vendors, delete_tenant, delete_vendor, get_connection
+from .db import initialize_database, borrow_license, return_license, get_status, update_budget_config, get_all_tools, get_overage_charges, get_all_tenants, get_vendor_customers, provision_license_to_tenant, create_tenant, create_vendor, get_all_vendors, delete_tenant, delete_vendor, get_connection, verify_user_credentials, get_password_context
 
 # App version for observability/journey (surfaced in logs & API)
 APP_VERSION = os.getenv("APP_VERSION", "dev")
@@ -85,6 +87,13 @@ app = FastAPI(title="License Server", version="0.1.0")
 
 # Instrument FastAPI app with OpenTelemetry
 FastAPIInstrumentor.instrument_app(app)
+
+# Session management
+SECRET_KEY = os.getenv("SESSION_SECRET_KEY", "change-me-in-production-please-use-a-secure-random-key")
+SESSION_COOKIE_NAME = "permetrix_session"
+SESSION_MAX_AGE = 86400 * 7  # 7 days
+
+serializer = URLSafeTimedSerializer(SECRET_KEY)
 
 # Structured logging - stdout only (Fly.io captures stdout automatically)
 import logging
@@ -1481,5 +1490,203 @@ async def admin_delete_vendor(vendor_id: str, request: Request, hard_delete: boo
     except Exception as e:
         logger.error(f"Error deleting vendor: {e}")
         raise HTTPException(500, f"Failed to delete vendor: {str(e)}")
+
+
+# ============================================================================
+# USER AUTHENTICATION & SESSION MANAGEMENT
+# ============================================================================
+
+def get_current_user(session_token: Optional[str] = Cookie(None)) -> Optional[dict]:
+    """Get current user from session token"""
+    if not session_token:
+        return None
+    
+    try:
+        data = serializer.loads(session_token, max_age=SESSION_MAX_AGE)
+        return data
+    except (BadSignature, SignatureExpired):
+        return None
+
+
+def require_auth(session_token: Optional[str] = Cookie(None)) -> dict:
+    """Require authentication - redirect to login if not authenticated"""
+    user = get_current_user(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    return user
+
+
+@app.get("/login", response_class=HTMLResponse)
+def login_page():
+    """Login page"""
+    with open("app/static/login.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
+@app.get("/setup", response_class=HTMLResponse)
+def setup_page(token: Optional[str] = None):
+    """Setup page for first-time password setup"""
+    with open("app/static/setup.html", "r", encoding="utf-8") as f:
+        content = f.read()
+        if token:
+            content = content.replace('id="setup-token"', f'id="setup-token" value="{token}"')
+        return content
+
+
+@app.get("/profile", response_class=HTMLResponse)
+def profile_page(user: dict = Depends(require_auth)):
+    """User profile page"""
+    with open("app/static/profile.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
+@app.post("/api/auth/login")
+async def login(
+    username: str = Form(...),
+    password: str = Form(...),
+    response: Response = None
+):
+    """Login endpoint"""
+    if not verify_user_credentials(username, password):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    
+    # Get user details
+    with get_connection(True) as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT username, tenant_id, vendor_id, role, status
+            FROM users WHERE username = ?
+        """, (username,))
+        row = cur.fetchone()
+        if not row:
+            raise HTTPException(status_code=401, detail="User not found")
+        
+        user_data = dict(row)
+        
+        # Check if user is active
+        if user_data.get("status") == "deleted":
+            raise HTTPException(status_code=403, detail="Account has been deleted")
+        
+        # Update last login
+        try:
+            with get_connection(False) as conn2:
+                cur2 = conn2.cursor()
+                cur2.execute("""
+                    UPDATE users SET last_login_at = ? WHERE username = ?
+                """, (datetime.utcnow().isoformat(), username))
+                conn2.commit()
+        except Exception:
+            pass  # Non-critical
+    
+    # Create session token
+    session_data = {
+        "username": username,
+        "tenant_id": user_data.get("tenant_id"),
+        "vendor_id": user_data.get("vendor_id"),
+        "role": user_data.get("role", "user")
+    }
+    session_token = serializer.dumps(session_data)
+    
+    # Set cookie
+    response = Response()
+    response.set_cookie(
+        key=SESSION_COOKIE_NAME,
+        value=session_token,
+        max_age=SESSION_MAX_AGE,
+        httponly=True,
+        secure=True,  # HTTPS only in production
+        samesite="lax"
+    )
+    
+    # Redirect based on role
+    if user_data.get("vendor_id"):
+        response.headers["Location"] = "/vendor"
+    elif user_data.get("tenant_id"):
+        response.headers["Location"] = "/dashboard"
+    else:
+        response.headers["Location"] = "/dashboard"
+    
+    response.status_code = 302
+    return response
+
+
+@app.post("/api/auth/setup")
+async def setup_password(
+    setup_token: str = Form(...),
+    password: str = Form(...),
+    response: Response = None
+):
+    """Setup password for first-time login"""
+    # Verify setup token
+    with get_connection(True) as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT username, tenant_id, vendor_id, role, status
+            FROM users WHERE setup_token = ? AND status = 'pending_verification'
+        """, (setup_token,))
+        row = cur.fetchone()
+        if not row:
+            raise HTTPException(status_code=400, detail="Invalid or expired setup token")
+        
+        user_data = dict(row)
+        username = user_data["username"]
+    
+    # Hash password
+    pwd_context = get_password_context()
+    password_hash = pwd_context.hash(password)
+    
+    # Update user
+    with get_connection(False) as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE users 
+            SET password_hash = ?, status = 'active', setup_token = NULL
+            WHERE username = ?
+        """, (password_hash, username))
+        conn.commit()
+    
+    # Create session and redirect
+    session_data = {
+        "username": username,
+        "tenant_id": user_data.get("tenant_id"),
+        "vendor_id": user_data.get("vendor_id"),
+        "role": user_data.get("role", "user")
+    }
+    session_token = serializer.dumps(session_data)
+    
+    response = Response()
+    response.set_cookie(
+        key=SESSION_COOKIE_NAME,
+        value=session_token,
+        max_age=SESSION_MAX_AGE,
+        httponly=True,
+        secure=True,
+        samesite="lax"
+    )
+    
+    # Redirect based on role
+    if user_data.get("vendor_id"):
+        response.headers["Location"] = "/vendor"
+    elif user_data.get("tenant_id"):
+        response.headers["Location"] = "/dashboard"
+    else:
+        response.headers["Location"] = "/dashboard"
+    
+    response.status_code = 302
+    return response
+
+
+@app.post("/api/auth/logout")
+async def logout(response: Response):
+    """Logout endpoint"""
+    response = RedirectResponse(url="/login", status_code=302)
+    response.delete_cookie(SESSION_COOKIE_NAME)
+    return response
+
+
+@app.get("/api/auth/me")
+async def get_current_user_info(user: dict = Depends(require_auth)):
+    """Get current user information"""
+    return user
 
 
