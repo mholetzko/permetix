@@ -1298,3 +1298,185 @@ def get_all_vendors() -> List[dict]:
         except sqlite3.OperationalError:
             # Table doesn't exist yet
             return []
+
+
+def delete_tenant(tenant_id: str, hard_delete: bool = False) -> dict:
+    """
+    Delete a tenant (customer).
+    
+    Args:
+        tenant_id: Tenant ID to delete
+        hard_delete: If True, permanently delete. If False, soft delete (set status='deleted')
+    
+    Returns:
+        dict with deletion status
+    """
+    initialize_database(enable_multitenant=True)
+    
+    with get_connection(readonly=False) as conn:
+        cur = conn.cursor()
+        
+        # Check if tenant exists
+        cur.execute("SELECT tenant_id, company_name FROM tenants WHERE tenant_id = ?", (tenant_id,))
+        tenant = cur.fetchone()
+        if not tenant:
+            raise ValueError(f"Tenant {tenant_id} not found")
+        
+        company_name = tenant[1] if isinstance(tenant, tuple) else tenant["company_name"]
+        
+        if hard_delete:
+            # Hard delete: Remove all related data
+            
+            # Check for active borrows
+            try:
+                cur.execute("SELECT COUNT(*) FROM borrows WHERE tenant_id = ?", (tenant_id,))
+                active_borrows = cur.fetchone()[0]
+                if active_borrows > 0:
+                    raise ValueError(f"Cannot delete tenant with {active_borrows} active borrows. Return licenses first.")
+            except sqlite3.OperationalError:
+                pass  # Table might not exist in single-tenant mode
+            
+            # Delete in order (respecting foreign keys)
+            # 1. Overage charges
+            try:
+                cur.execute("DELETE FROM overage_charges WHERE tenant_id = ?", (tenant_id,))
+            except sqlite3.OperationalError:
+                pass
+            
+            # 2. Borrows
+            try:
+                cur.execute("DELETE FROM borrows WHERE tenant_id = ?", (tenant_id,))
+            except sqlite3.OperationalError:
+                pass
+            
+            # 3. Licenses
+            try:
+                cur.execute("DELETE FROM licenses WHERE tenant_id = ?", (tenant_id,))
+            except sqlite3.OperationalError:
+                pass
+            
+            # 4. License packages
+            try:
+                cur.execute("DELETE FROM license_packages WHERE tenant_id = ?", (tenant_id,))
+            except sqlite3.OperationalError:
+                pass
+            
+            # 5. API keys
+            try:
+                cur.execute("DELETE FROM api_keys WHERE tenant_id = ?", (tenant_id,))
+            except sqlite3.OperationalError:
+                pass
+            
+            # 6. Users
+            try:
+                cur.execute("DELETE FROM users WHERE tenant_id = ?", (tenant_id,))
+            except sqlite3.OperationalError:
+                pass
+            
+            # 7. Tenant
+            cur.execute("DELETE FROM tenants WHERE tenant_id = ?", (tenant_id,))
+            
+            conn.commit()
+            
+            return {
+                "tenant_id": tenant_id,
+                "company_name": company_name,
+                "status": "deleted",
+                "deletion_type": "hard",
+                "message": f"Tenant {tenant_id} ({company_name}) permanently deleted"
+            }
+        else:
+            # Soft delete: Just mark as deleted
+            cur.execute("""
+                UPDATE tenants 
+                SET status = 'deleted' 
+                WHERE tenant_id = ?
+            """, (tenant_id,))
+            conn.commit()
+            
+            return {
+                "tenant_id": tenant_id,
+                "company_name": company_name,
+                "status": "deleted",
+                "deletion_type": "soft",
+                "message": f"Tenant {tenant_id} ({company_name}) marked as deleted (soft delete)"
+            }
+
+
+def delete_vendor(vendor_id: str, hard_delete: bool = False) -> dict:
+    """
+    Delete a vendor.
+    
+    Args:
+        vendor_id: Vendor ID to delete
+        hard_delete: If True, permanently delete. If False, soft delete (set status='deleted')
+    
+    Returns:
+        dict with deletion status
+    """
+    initialize_database(enable_multitenant=True)
+    
+    with get_connection(readonly=False) as conn:
+        cur = conn.cursor()
+        
+        # Check if vendor exists
+        cur.execute("SELECT vendor_id, vendor_name FROM vendors WHERE vendor_id = ?", (vendor_id,))
+        vendor = cur.fetchone()
+        if not vendor:
+            raise ValueError(f"Vendor {vendor_id} not found")
+        
+        vendor_name = vendor[1] if isinstance(vendor, tuple) else vendor["vendor_name"]
+        
+        if hard_delete:
+            # Hard delete: Remove all related data
+            
+            # Check for active license packages
+            try:
+                cur.execute("SELECT COUNT(*) FROM license_packages WHERE vendor_id = ?", (vendor_id,))
+                active_packages = cur.fetchone()[0]
+                if active_packages > 0:
+                    raise ValueError(f"Cannot delete vendor with {active_packages} active license packages. Remove packages first.")
+            except sqlite3.OperationalError:
+                pass
+            
+            # Delete in order (respecting foreign keys)
+            # 1. License packages (should be empty, but clean up anyway)
+            try:
+                cur.execute("DELETE FROM license_packages WHERE vendor_id = ?", (vendor_id,))
+            except sqlite3.OperationalError:
+                pass
+            
+            # 2. Users
+            try:
+                cur.execute("DELETE FROM users WHERE vendor_id = ?", (vendor_id,))
+            except sqlite3.OperationalError:
+                pass
+            
+            # 3. Vendor
+            cur.execute("DELETE FROM vendors WHERE vendor_id = ?", (vendor_id,))
+            
+            conn.commit()
+            
+            return {
+                "vendor_id": vendor_id,
+                "vendor_name": vendor_name,
+                "status": "deleted",
+                "deletion_type": "hard",
+                "message": f"Vendor {vendor_id} ({vendor_name}) permanently deleted"
+            }
+        else:
+            # Soft delete: Just mark as deleted
+            cur.execute("""
+                UPDATE vendors 
+                SET status = 'deleted' 
+                WHERE vendor_id = ?
+            """, (vendor_id,))
+            conn.commit()
+            
+            return {
+                "vendor_id": vendor_id,
+                "vendor_name": vendor_name,
+                "status": "deleted",
+                "deletion_type": "soft",
+                "message": f"Vendor {vendor_id} ({vendor_name}) marked as deleted (soft delete)"
+            }

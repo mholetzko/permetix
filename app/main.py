@@ -16,7 +16,7 @@ from fastapi.responses import Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
-from .db import initialize_database, borrow_license, return_license, get_status, update_budget_config, get_all_tools, get_overage_charges, get_all_tenants, get_vendor_customers, provision_license_to_tenant, create_tenant, create_vendor, get_all_vendors
+from .db import initialize_database, borrow_license, return_license, get_status, update_budget_config, get_all_tools, get_overage_charges, get_all_tenants, get_vendor_customers, provision_license_to_tenant, create_tenant, create_vendor, get_all_vendors, delete_tenant, delete_vendor
 
 # App version for observability/journey (surfaced in logs & API)
 APP_VERSION = os.getenv("APP_VERSION", "dev")
@@ -1439,5 +1439,47 @@ async def admin_platform_stats(request: Request):
     except Exception as e:
         logger.error(f"Error getting platform stats: {e}")
         raise HTTPException(500, f"Failed to get platform stats: {str(e)}")
+
+
+@app.delete("/api/admin/tenants/{tenant_id}")
+async def admin_delete_tenant(tenant_id: str, request: Request, hard_delete: bool = False):
+    """Delete a tenant (Admin API)
+    
+    Args:
+        tenant_id: Tenant ID to delete
+        hard_delete: If True, permanently delete. If False, soft delete (default).
+    """
+    verify_admin_api_key(request)
+    
+    try:
+        result = delete_tenant(tenant_id, hard_delete=hard_delete)
+        logger.info(f"Admin deleted tenant: {tenant_id} (hard_delete={hard_delete})")
+        return result
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except Exception as e:
+        logger.error(f"Error deleting tenant: {e}")
+        raise HTTPException(500, f"Failed to delete tenant: {str(e)}")
+
+
+@app.delete("/api/admin/vendors/{vendor_id}")
+async def admin_delete_vendor(vendor_id: str, request: Request, hard_delete: bool = False):
+    """Delete a vendor (Admin API)
+    
+    Args:
+        vendor_id: Vendor ID to delete
+        hard_delete: If True, permanently delete. If False, soft delete (default).
+    """
+    verify_admin_api_key(request)
+    
+    try:
+        result = delete_vendor(vendor_id, hard_delete=hard_delete)
+        logger.info(f"Admin deleted vendor: {vendor_id} (hard_delete={hard_delete})")
+        return result
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except Exception as e:
+        logger.error(f"Error deleting vendor: {e}")
+        raise HTTPException(500, f"Failed to delete vendor: {str(e)}")
 
 
