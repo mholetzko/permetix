@@ -1010,7 +1010,7 @@ def customer_request_more(req: RequestMorePayload):
                 """
             )
             rid = str(uuid.uuid4())
-            created_at = datetime.utcnow().isoformat()
+            created_at = datetime.now(timezone.utc).isoformat()
             cur.execute(
                 "INSERT INTO request_more(id, tool, message, requested_total, requested_overage, created_at) VALUES (?, ?, ?, ?, ?, ?)",
                 (rid, req.tool, (req.message or ""), req.requested_total, req.requested_overage, created_at)
@@ -1203,7 +1203,7 @@ def add_customer(req: AddCustomerRequest):
         
         with get_connection(False) as conn:
             cur = conn.cursor()
-            now = datetime.utcnow().isoformat()
+            now = datetime.now(timezone.utc).isoformat()
             
             cur.execute(
                 "INSERT INTO tenants(tenant_id, company_name, domain, crm_id, status, created_at) VALUES (?, ?, ?, ?, 'active', ?)",
@@ -1573,7 +1573,7 @@ async def login(
                 cur2 = conn2.cursor()
                 cur2.execute("""
                     UPDATE users SET last_login_at = ? WHERE username = ?
-                """, (datetime.utcnow().isoformat(), username))
+                """, (datetime.now(timezone.utc).isoformat(), username))
                 conn2.commit()
         except Exception:
             pass  # Non-critical
