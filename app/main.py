@@ -16,7 +16,7 @@ from fastapi.responses import Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
-from .db import initialize_database, borrow_license, return_license, get_status, update_budget_config, get_all_tools, get_overage_charges, get_all_tenants, get_vendor_customers, provision_license_to_tenant, create_tenant, create_vendor, get_all_vendors, delete_tenant, delete_vendor
+from .db import initialize_database, borrow_license, return_license, get_status, update_budget_config, get_all_tools, get_overage_charges, get_all_tenants, get_vendor_customers, provision_license_to_tenant, create_tenant, create_vendor, get_all_vendors, delete_tenant, delete_vendor, get_connection
 
 # App version for observability/journey (surfaced in logs & API)
 APP_VERSION = os.getenv("APP_VERSION", "dev")
