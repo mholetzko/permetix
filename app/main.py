@@ -4,6 +4,7 @@ import uuid
 import asyncio
 import json
 import urllib.parse
+import sqlite3
 from datetime import datetime, timezone, timedelta
 from typing import Dict, Optional, List
 from collections import deque
