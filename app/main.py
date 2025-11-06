@@ -1589,12 +1589,13 @@ async def login(
     
     # Set cookie
     response = Response()
+    is_production = os.getenv("ENVIRONMENT") == "production" or "fly.dev" in os.getenv("FLY_APP_NAME", "")
     response.set_cookie(
         key=SESSION_COOKIE_NAME,
         value=session_token,
         max_age=SESSION_MAX_AGE,
         httponly=True,
-        secure=True,  # HTTPS only in production
+        secure=is_production,  # HTTPS only in production
         samesite="lax"
     )
     
